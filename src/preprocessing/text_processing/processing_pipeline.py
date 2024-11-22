@@ -3,8 +3,8 @@ import logging
 from nltk.tokenize import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
-from src.text_processing.sentence_cleaning_classes import RemoveAbbreviations, RemoveHtml, RemoveNumbers, RemovePatterns, RemovePunctuations, RemoveUrl
-from src.text_processing.text_processing_functions import lemmatize_text, remove_stopwords, stem_text
+from src.preprocessing.text_processing.sentence_cleaning_classes import RemoveAbbreviations, RemoveHtml, RemoveNumbers, RemovePatterns, RemovePunctuations, RemoveUrl
+from src.preprocessing.text_processing.text_processing_functions import lemmatize_text, remove_stopwords, stem_text
 
 
 def ind_preprocess_text(text, processing_steps, tokenized=False):
