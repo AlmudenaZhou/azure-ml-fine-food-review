@@ -1,8 +1,11 @@
-import logging
+import os
 
-from azure.ai.ml import MLClient, Input, Output
+import logging
+import shutil
+from tempfile import TemporaryDirectory
+
+from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Environment, BuildContext
-from azure.ai.ml.dsl import pipeline
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 from azure.ai.ml import command
 from azure.ai.ml.entities import Data
@@ -41,9 +44,10 @@ class AzureMLInterface:
             compute=compute,
             experiment_name=experiment_name
         )
-
+        logger.info("Launching the command")
         # connect to workspace and submit job
         returned_job = self.ml_client.create_or_update(job)
+        logger.info(f"Returned job: {returned_job}")
         return returned_job
 
     def create_urifile_dataasset_from_local_file(self, local_filepath, description="", name="", version="0"):
@@ -66,10 +70,21 @@ class AzureMLInterface:
         )
         self.ml_client.begin_create_or_update(ci_basic).result()
 
-    def create_environment_from_dockerfile(self,):
-        env_docker_context = Environment(
-            build=BuildContext(path="./"),
-            name="docker-context-example",
-            description="Environment created from a Docker context.",
+    def create_environment_from_dockerfile(self, environment_name=None):
+
+        if not environment_name:
+            environment_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
+
+        with TemporaryDirectory() as temp_dir:
+            shutil.copy("./Dockerfile", os.path.join(temp_dir, "Dockerfile"))
+
+            env_docker_context = Environment(
+                build=BuildContext(path=temp_dir),
+                name=environment_name,
+                description="Environment created to run the Pipelines for Fine Food Reviews.",
+            )
+            pipeline_job_env = self.ml_client.environments.create_or_update(env_docker_context)
+
+        logger.info(
+            f"Environment with name {pipeline_job_env.name} is registered to workspace, the environment version is {pipeline_job_env.version}"
         )
-        self.ml_client.environments.create_or_update(env_docker_context)
