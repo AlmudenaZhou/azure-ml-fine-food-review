@@ -34,10 +34,15 @@ Note: it will require you to log in Kaggle.
 After having downloaded the data and put in the data folder:
 
 1. Create an Azure ML Workspace
-2. Create a compute machine, in my case: Standard_DS11_v2
-3. Create a Data Asset using a URI file and selecting local -> data/Reviews.csv and get the `Datastore URI` to add it to the notebook.
+2. Fill the .env with the env_example variables
+3. Run with the Azure CLI to login:
+   ```bash
+   azd auth login --scope https://management.azure.com/.default
+   ```
+4. Run `code/azure_ml_setup.py` to create the compute and the Data Asset.
 
 ### Exploration
+
 
 
 ### Training Pipeline
