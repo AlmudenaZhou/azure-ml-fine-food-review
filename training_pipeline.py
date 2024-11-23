@@ -13,7 +13,7 @@ from src.azure_ml_interface import AzureMLInterface
 from src.pipeline_steps.load_data.load_data_step import LoadDataStep
 from src.pipeline_steps.handle_imbalance.handle_imbalance_step import HandleImbalanceStep
 from src.pipeline_steps.text2vector.text2vector_step import Text2VectorStep
-from src.pipeline_steps.preprocessing.training_data_cleaning_step import TrainingDataCleaningStep
+from src.pipeline_steps.training_data_cleaning.training_data_cleaning_step import TrainingDataCleaningStep
 from src.pipeline_steps.text_processing.processing import preprocess_text
 
 
