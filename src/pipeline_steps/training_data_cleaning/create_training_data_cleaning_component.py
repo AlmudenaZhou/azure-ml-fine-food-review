@@ -21,18 +21,16 @@ def create_training_data_cleaning_component():
         description="reads a .csv file and cleans duplicates and converts the labels",
         inputs={
             "data": Input(type="uri_file"),
-            "clean_filename": Input(type="string"),
+            "clean_filename": Input(type="string", optional=True, default="cleaned_data.csv"),
         },
         outputs=dict(
             clean_data=Output(type="uri_folder", mode="rw_mount")
         ),
         code="./src/pipeline_steps/training_data_cleaning",
         command="""python training_data_cleaning_component.py \
-                --data ${{inputs.data}} --clean_filename ${{inputs.clean_filename}} \
+                --data ${{inputs.data}} --clean_filename $[[inputs.clean_filename]] \
                 --clean_data ${{outputs.clean_data}}\
                 """,
-
-
         environment=f'{env_name}:{env_version}',
     )
 
