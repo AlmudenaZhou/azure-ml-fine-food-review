@@ -8,6 +8,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # from src.config import config
+from src.pipeline_steps.split_data.split_data_step import SplitDataStep
 from src.pipeline_steps.model_training.model_training_step import ModelTrainingStep
 from src.azure_ml_interface import AzureMLInterface
 from src.pipeline_steps.load_data.load_data_step import LoadDataStep
@@ -60,9 +61,7 @@ class TrainingPipeline:
             data = TextPreprocessingStep().main(data)
             data.to_csv("data/preprocessed_data.csv")
 
-        logger.info("Splitting the data...")
-        test_size = float(os.environ["TEST_SIZE"])
-        X_train, X_test, y_train, y_test = train_test_split(data.Text, data.Label, test_size=test_size)
+        X_train, X_test, y_train, y_test = SplitDataStep().main(data)
         for step in self.train_data_steps:
             X_train, y_train = step().main(X_train, y_train)
 
