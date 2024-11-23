@@ -1,4 +1,5 @@
 import os
+import time
 
 import logging
 import shutil
@@ -123,7 +124,6 @@ class AzureMLInterface:
                       component_version=None, wait_for_completion=False):
 
         component = self.ml_client.components.get(name=component_name, version=component_version)
-        print(component.environment)
         job = command(
             component=component,
             inputs=inputs,
@@ -131,6 +131,14 @@ class AzureMLInterface:
             compute=compute_instance,
             environment=component.environment
         )
-        submitted_job = self.ml_client.jobs.create_or_update(job)
+        returned_job = self.ml_client.jobs.create_or_update(job)
+
         if wait_for_completion:
-            submitted_job.wait_for_completion(show_output=True)
+            status = "Running"
+            print("Running")
+            i = 0
+            while (status not in ["CancelRequested", "Completed", "Failed", "Canceled", "NotResponding"]):
+                status = returned_job.status
+                time.sleep(1)
+                i += 1
+                print(f"Status at second {i}: {status}")
