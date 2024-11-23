@@ -38,6 +38,32 @@ def create_training_data_cleaning_component():
     azure_ml_interface.create_component_from_component(training_data_cleaning_component)
 
 
+def run_training_data_cleaning_component():
+    azure_ml_interface = AzureMLInterface()
+    component_name = "training_data_cleaning"
+
+    subscription_id = os.getenv("SUBSCRIPTION_ID")
+    resource_group = os.getenv("RESOURCE_GROUP")
+    workspace = os.getenv("WORKSPACE")
+    relative_raw_data_uri = os.getenv("RELATIVE_URI_RAW_DATA")
+
+    data_uri = (f"azureml://subscriptions/{subscription_id}/resourcegroups/{resource_group}/workspaces/" +
+                f"{workspace}/datastores/workspaceblobstore/paths/{relative_raw_data_uri}")
+    
+    output_data_uri = (f"azureml://subscriptions/{subscription_id}/resourcegroups/{resource_group}/workspaces/" +
+                       f"{workspace}/datastores/workspaceblobstore/paths/{relative_raw_data_uri}")
+    output_data_uri = "/".join(output_data_uri.split("/")[:-1])
+    clean_data_output = Output(type="uri_folder", path=output_data_uri)
+
+    inputs = {
+        "data": data_uri,
+    }
+    outputs = {"clean_data": clean_data_output}
+    azure_ml_interface.run_component(component_name=component_name, inputs=inputs, outputs=outputs,
+                                     compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
+                                     component_version=None)
+
+
 if __name__ == "__main__":
     from dotenv import load_dotenv
 
