@@ -18,7 +18,10 @@ logger = logging.getLogger(__name__)
 
 class AzureMLInterface:
 
-    def __init__(self, subscription_id, resource_group, workspace):
+    def __init__(self, subscription_id=os.getenv("SUBSCRIPTION_ID"),
+                 resource_group = os.getenv("RESOURCE_GROUP"),
+                 workspace = os.getenv("WORKSPACE")):
+
         credential = self.get_credentials()
         self.ml_client = MLClient(
             credential, subscription_id, resource_group, workspace
@@ -87,4 +90,10 @@ class AzureMLInterface:
 
         logger.info(
             f"Environment with name {pipeline_job_env.name} is registered to workspace, the environment version is {pipeline_job_env.version}"
+        )
+
+    def create_component_from_component(self, component):
+        component = self.ml_client.create_or_update(component.component)
+        print(
+            f"Component {component.name} with Version {component.version} is registered"
         )
