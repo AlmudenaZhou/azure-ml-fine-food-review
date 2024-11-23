@@ -16,6 +16,8 @@ def main():
     logger.info("Compute instance Status:", comp_status.state)
     if comp_status.state == 'Stopped':
         azure_ml_interface.start_compute(compute_name)
+        while comp_status != "Running":
+            comp_status = azure_ml_interface.get_compute_status(compute_name)
 
     run_training_data_cleaning_component(wait_for_completion=True)
     run_text_processing_component(wait_for_completion=True)
