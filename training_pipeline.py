@@ -14,7 +14,7 @@ from src.pipeline_steps.load_data.load_data_step import LoadDataStep
 from src.pipeline_steps.handle_imbalance.handle_imbalance_step import HandleImbalanceStep
 from src.pipeline_steps.text2vector.text2vector_step import Text2VectorStep
 from src.pipeline_steps.training_data_cleaning.training_data_cleaning_step import TrainingDataCleaningStep
-from src.pipeline_steps.text_processing.processing import preprocess_text
+from src.pipeline_steps.text_processing.text_processing_step import TextPreprocessingStep
 
 
 logging.config.fileConfig('logger.conf')
@@ -33,12 +33,6 @@ class TrainingPipeline:
             resource_group = os.getenv("RESOURCE_GROUP")
             workspace = os.getenv("WORKSPACE")
             self.azure_ml_interface = AzureMLInterface(subscription_id, resource_group, workspace)
-
-    def _preprocessing_data(self, data):
-        logger.info("Starting preprocess")
-        data['Text'] = preprocess_text(data['Text'])
-        data = data.loc[:, ['Text', 'Label']]
-        return data
     
     def _save_posprocessed_data(self, data, prefix=""):
         
@@ -63,7 +57,7 @@ class TrainingPipeline:
             logger.info("Starting all data steps...")
             data = LoadDataStep(input_data_uri).main()
             data = TrainingDataCleaningStep().main(data)
-            data = self._preprocessing_data(data)
+            data = TextPreprocessingStep().main(data)
             data.to_csv("data/preprocessed_data.csv")
 
         logger.info("Splitting the data...")
