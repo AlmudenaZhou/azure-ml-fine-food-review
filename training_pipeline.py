@@ -13,7 +13,7 @@ from src.azure_ml_interface import AzureMLInterface
 from src.pipeline_steps.load_data.load_data_step import LoadDataStep
 from src.pipeline_steps.handle_imbalance.handle_imbalance_step import HandleImbalanceStep
 from src.pipeline_steps.text2vector.text2vector_step import Text2VectorStep
-from src.pipeline_steps.preprocessing.training_data_cleaning import data_to_binary, training_dataset_cleaning
+from pipeline_steps.preprocessing.training_data_cleaning_step import TrainingDataCleaningStep, data_to_binary, training_dataset_cleaning
 from src.pipeline_steps.text_processing.processing import preprocess_text
 
 
@@ -33,13 +33,6 @@ class TrainingPipeline:
             resource_group = os.getenv("RESOURCE_GROUP")
             workspace = os.getenv("WORKSPACE")
             self.azure_ml_interface = AzureMLInterface(subscription_id, resource_group, workspace)
-
-    def _preprocessing_training_data(self, data):
-        logger.info("Cleaning the dataset")
-        data = training_dataset_cleaning(data)
-        logger.info("Converting the label to binary")
-        data = data_to_binary(data)        
-        return data
 
     def _preprocessing_data(self, data):
         logger.info("Starting preprocess")
@@ -69,7 +62,7 @@ class TrainingPipeline:
         if not data:
             logger.info("Starting all data steps...")
             data = LoadDataStep(input_data_uri).main()
-            data = self._preprocessing_training_data(data)
+            data = TrainingDataCleaningStep().main(data)
             data = self._preprocessing_data(data)
             data.to_csv("data/preprocessed_data.csv")
 
