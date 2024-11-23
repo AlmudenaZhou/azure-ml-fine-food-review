@@ -8,13 +8,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # from src.config import config
-from src.pipeline_steps.model_training_step import ModelTrainingStep
+from src.pipeline_steps.model_training.model_training_step import ModelTrainingStep
 from src.azure_ml_interface import AzureMLInterface
-from src.pipeline_steps.load_data_step import LoadDataStep
-from src.pipeline_steps.handle_imbalance_step import HandleImbalanceStep
-from src.pipeline_steps.text2vector_step import Text2VectorStep
-from src.preprocessing.training_data_cleaning import data_to_binary, training_dataset_cleaning
-from src.preprocessing.text_processing.processing_pipeline import preprocess_text
+from src.pipeline_steps.load_data.load_data_step import LoadDataStep
+from src.pipeline_steps.handle_imbalance.handle_imbalance_step import HandleImbalanceStep
+from src.pipeline_steps.text2vector.text2vector_step import Text2VectorStep
+from src.pipeline_steps.preprocessing.training_data_cleaning import data_to_binary, training_dataset_cleaning
+from src.pipeline_steps.text_processing.processing import preprocess_text
 
 
 logging.config.fileConfig('logger.conf')

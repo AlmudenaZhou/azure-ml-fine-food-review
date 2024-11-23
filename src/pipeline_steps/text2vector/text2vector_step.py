@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 
-from src.preprocessing.text_processing.word2vec_model import Word2VecModel
+from src.pipeline_steps.text2vector.word2vec_model import Word2VecModel
 
 
 logger = logging.getLogger(__name__)
