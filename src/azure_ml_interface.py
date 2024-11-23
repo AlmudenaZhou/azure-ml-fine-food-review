@@ -55,7 +55,7 @@ class AzureMLInterface:
         return returned_job
 
     def create_urifile_dataasset_from_local_file(self, local_filepath, description="", name="", version="0"):
-
+        logger.info("Creating the Data Asset from: ", local_filepath)
         my_data = Data(
             path=local_filepath,
             type=AssetTypes.URI_FILE,
@@ -67,7 +67,7 @@ class AzureMLInterface:
         self.ml_client.data.create_or_update(my_data)
 
     def create_compute_instance(self, ci_basic_name, ci_size="Standard_DS11_v2"):
-
+        logger.info("Creating Compute Instance: ", ci_basic_name)
         ci_basic = ComputeInstance(
             name=ci_basic_name, 
             size=ci_size
@@ -75,19 +75,25 @@ class AzureMLInterface:
         self.ml_client.begin_create_or_update(ci_basic).result()
 
     def get_compute_status(self, ci_basic_name):
+        logger.info("Getting the status from Compute Instance: ", ci_basic_name)
         ci_basic_state = self.ml_client.compute.get(ci_basic_name)
+        logger.info("Status: ", ci_basic_state)
         return ci_basic_state
     
     def stop_compute(self, ci_basic_name):
+        logger.info("Stopping Compute Instance: ", ci_basic_name)
         self.ml_client.compute.begin_stop(ci_basic_name).wait()
     
     def start_compute(self, ci_basic_name):
+        logger.info("Starting Compute Instance: ", ci_basic_name)
         self.ml_client.compute.begin_start(ci_basic_name).wait()
 
     def restart_compute(self, ci_basic_name):
+        logger.info("Restarting Compute Instance: ", ci_basic_name)
         self.ml_client.compute.begin_restart(ci_basic_name).wait()
 
     def delete_compute(self, ci_basic_name):
+        logger.info("Deleting Compute Instance: ", ci_basic_name)
         self.ml_client.compute.begin_delete(ci_basic_name).wait()
 
     def create_environment_from_dockerfile(self, environment_name=os.getenv("AZURE_ML_ENVIRONMENT_NAME")):
@@ -114,7 +120,7 @@ class AzureMLInterface:
         )
 
     def run_component(self, component_name, inputs, outputs=None, compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
-                      component_version=None):
+                      component_version=None, wait_for_completion=False):
 
         component = self.ml_client.components.get(name=component_name, version=component_version)
         print(component.environment)
@@ -125,4 +131,6 @@ class AzureMLInterface:
             compute=compute_instance,
             environment=component.environment
         )
-        self.ml_client.jobs.create_or_update(job)
+        submitted_job = self.ml_client.jobs.create_or_update(job)
+        if wait_for_completion:
+            submitted_job.wait_for_completion(show_output=True)
