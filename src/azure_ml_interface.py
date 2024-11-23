@@ -5,6 +5,7 @@ import shutil
 from tempfile import TemporaryDirectory
 
 from azure.ai.ml import MLClient
+from azure.ai.ml.entities import ComputeInstance
 from azure.ai.ml.entities import Environment, BuildContext
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 from azure.ai.ml import command
@@ -73,13 +74,27 @@ class AzureMLInterface:
         )
         self.ml_client.begin_create_or_update(ci_basic).result()
 
-    def create_environment_from_dockerfile(self, environment_name=None):
+    def get_compute_status(self, ci_basic_name):
+        ci_basic_state = self.ml_client.compute.get(ci_basic_name)
+        return ci_basic_state
+    
+    def stop_compute(self, ci_basic_name):
+        self.ml_client.compute.begin_stop(ci_basic_name).wait()
+    
+    def start_compute(self, ci_basic_name):
+        self.ml_client.compute.begin_start(ci_basic_name).wait()
 
-        if not environment_name:
-            environment_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
+    def restart_compute(self, ci_basic_name):
+        self.ml_client.compute.begin_restart(ci_basic_name).wait()
+
+    def delete_compute(self, ci_basic_name):
+        self.ml_client.compute.begin_delete(ci_basic_name).wait()
+
+    def create_environment_from_dockerfile(self, environment_name=os.getenv("AZURE_ML_ENVIRONMENT_NAME")):
 
         with TemporaryDirectory() as temp_dir:
             shutil.copy("./Dockerfile", os.path.join(temp_dir, "Dockerfile"))
+            shutil.copy("./requirements.txt", os.path.join(temp_dir, "requirements.txt"))
 
             env_docker_context = Environment(
                 build=BuildContext(path=temp_dir),
@@ -97,3 +112,17 @@ class AzureMLInterface:
         print(
             f"Component {component.name} with Version {component.version} is registered"
         )
+
+    def run_component(self, component_name, inputs, outputs=None, compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
+                      component_version=None):
+
+        component = self.ml_client.components.get(name=component_name, version=component_version)
+        print(component.environment)
+        job = command(
+            component=component,
+            inputs=inputs,
+            outputs=outputs,
+            compute=compute_instance,
+            environment=component.environment
+        )
+        self.ml_client.jobs.create_or_update(job)
