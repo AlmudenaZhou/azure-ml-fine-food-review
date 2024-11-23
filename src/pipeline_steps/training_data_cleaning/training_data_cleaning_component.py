@@ -10,7 +10,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, help="path to input data")
     parser.add_argument("--clean_filename", type=str, help="name of the cleaned data file",
-                        default="data.csv")
+                        default="cleaned_data.csv")
     parser.add_argument("--clean_data", type=str, help="path to cleaned data")
     args = parser.parse_args()
 

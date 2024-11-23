@@ -28,7 +28,7 @@ def create_training_data_cleaning_component():
         ),
         code="./src/pipeline_steps/training_data_cleaning",
         command="""python training_data_cleaning_component.py \
-                --data ${{inputs.data}} --clean_filename $[[inputs.clean_filename]] \
+                --data ${{inputs.data}} --clean_filename $[[cleaned_data.csv]] \
                 --clean_data ${{outputs.clean_data}}\
                 """,
         environment=f'{env_name}:{env_version}',
@@ -38,7 +38,7 @@ def create_training_data_cleaning_component():
     azure_ml_interface.create_component_from_component(training_data_cleaning_component)
 
 
-def run_training_data_cleaning_component():
+def run_training_data_cleaning_component(wait_for_completion=False):
     azure_ml_interface = AzureMLInterface()
     component_name = "training_data_cleaning"
 
@@ -61,7 +61,7 @@ def run_training_data_cleaning_component():
     outputs = {"clean_data": clean_data_output}
     azure_ml_interface.run_component(component_name=component_name, inputs=inputs, outputs=outputs,
                                      compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
-                                     component_version=None)
+                                     component_version=None, wait_for_completion=wait_for_completion)
 
 
 if __name__ == "__main__":
