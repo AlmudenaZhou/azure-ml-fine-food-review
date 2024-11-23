@@ -55,12 +55,12 @@ class HandleImbalanceStep:
     
     @staticmethod
     def save_model(best_imb_model):
-        with open('best_imb_model.pickle', 'wb') as file:
+        with open('models/best_imb_model.pickle', 'wb') as file:
             pickle.dump(best_imb_model, file, protocol=pickle.HIGHEST_PROTOCOL)
     
     def main(self, X_train, y_train):
         train_columns = X_train.columns
-        index = y_train.index
+
         if self.best_imb_model is None:
             self.best_imb_model = self._choose_best_imb_model(X_train, y_train)
 
@@ -69,6 +69,6 @@ class HandleImbalanceStep:
             logger.info("Resampled with the model")
             self.save_model(self.best_imb_model)
             logger.info("Imb model saved")
+            X_train = pd.DataFrame(X_train, columns=train_columns)
 
-        X_train = pd.DataFrame(X_train, index=index, columns=train_columns)
         return X_train, y_train

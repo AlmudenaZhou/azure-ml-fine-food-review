@@ -18,7 +18,7 @@ class Text2VectorStep:
     def __init__(self):
 
         self.dummy_model = LogisticRegression
-        
+
         self.text2vec_models = {'count_vec_ngram1': CountVectorizer(ngram_range=(1, 3), max_features=300),
                                 'count_vec_ngram2': CountVectorizer(ngram_range=(1, 2), max_features=300),
                                 'tfidf_ngram1': TfidfVectorizer(ngram_range=(1, 3), max_features=300),
@@ -43,12 +43,9 @@ class Text2VectorStep:
 
     @staticmethod
     def save_model(best_text2vec):
-        if hasattr(best_text2vec, "save_model"):
-            best_text2vec.save_model("best_text2vec.model")
-        else:
-            with open('best_text2vec.pickle', 'wb') as file:
-                pickle.dump(best_text2vec, file, protocol=pickle.HIGHEST_PROTOCOL)
-    
+        with open('models/best_text2vec.pickle', 'wb') as file:
+            pickle.dump(best_text2vec, file, protocol=pickle.HIGHEST_PROTOCOL)
+
     def main(self, X_train, y_train):
 
         if self.best_text2vec is None:

@@ -8,8 +8,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # from src.config import config
-from azure_ml_interface import AzureMLInterface
-from pipeline_steps.load_data_step import LoadDataStep
+from src.pipeline_steps.model_training_step import ModelTrainingStep
+from src.azure_ml_interface import AzureMLInterface
+from src.pipeline_steps.load_data_step import LoadDataStep
 from src.pipeline_steps.handle_imbalance_step import HandleImbalanceStep
 from src.pipeline_steps.text2vector_step import Text2VectorStep
 from src.preprocessing.training_data_cleaning import data_to_binary, training_dataset_cleaning
@@ -50,7 +51,7 @@ class TrainingPipeline:
         
         if not isinstance(data, pd.DataFrame):
             data = pd.DataFrame(data)
-        temp_dir = "./temp_data"
+        temp_dir = "./data"
         os.makedirs(temp_dir, exist_ok=True)
 
         output_filename = os.environ["POSPROCESSED_TRAINING_DATA_FILENAME"]
@@ -67,22 +68,25 @@ class TrainingPipeline:
         data = self.pospreprocess_data
         if not data:
             logger.info("Starting all data steps...")
-            data = LoadDataStep().main(input_data_uri)
+            data = LoadDataStep(input_data_uri).main()
             data = self._preprocessing_training_data(data)
             data = self._preprocessing_data(data)
-            data.to_csv("preprocessed_data.csv")
+            data.to_csv("data/preprocessed_data.csv")
 
         logger.info("Splitting the data...")
         test_size = float(os.environ["TEST_SIZE"])
         X_train, X_test, y_train, y_test = train_test_split(data.Text, data.Label, test_size=test_size)
-        for step in self.steps:
+        for step in self.train_data_steps:
             X_train, y_train = step().main(X_train, y_train)
 
         self._save_posprocessed_data(X_train, prefix="x_")
         self._save_posprocessed_data(y_train, prefix="y_")
 
-    def train_model(self):
-        pass
+        logger.info("Starting training...")
+        model_training_step = ModelTrainingStep()
+        model_training_step.main(X_train, y_train)
+        logger.info("Best model trained")
+        logger.info("Finished Training Pipeline")
 
 
 TrainingPipeline().main()

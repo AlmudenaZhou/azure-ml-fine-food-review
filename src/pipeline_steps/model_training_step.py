@@ -1,3 +1,4 @@
+import pickle
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -24,10 +25,16 @@ class ModelTrainingStep:
         best_model = self.model_dict[best_model_name]
         return best_model
     
-    def _train_best_model(self, X_train):
-        self.best_model.fit(X_train)
+    def _train_best_model(self, X_train, y_train):
+        self.best_model.fit(X_train, y_train)
+
+    @staticmethod
+    def save_model(best_model):
+        with open('models/best_model.pickle', 'wb') as file:
+            pickle.dump(best_model, file, protocol=pickle.HIGHEST_PROTOCOL)
 
     def main(self, X_train, y_train):
         self.best_model = self._choose_best_model(X_train, y_train)
-        self._train_best_model(X_train)
+        self._train_best_model(X_train, y_train)
+        self.save_model(self.best_model)
         return self.best_model
