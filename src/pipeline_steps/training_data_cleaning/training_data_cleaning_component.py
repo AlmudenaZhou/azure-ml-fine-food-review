@@ -9,8 +9,8 @@ from src.pipeline_steps.training_data_cleaning.training_data_cleaning_step impor
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, help="path to input data")
-    parser.add_argument("--clean_filename", type=str, help="number ", default="data.csv")
-    parser.add_argument("--clean_data", type=str, help="path to posprocessed data")
+    parser.add_argument("--clean_filename", type=str, help="name of the cleaned data file", default="data.csv")
+    parser.add_argument("--clean_data", type=str, help="path to cleaned data")
     args = parser.parse_args()
 
     print(" ".join(f"{k}={v}" for k, v in vars(args).items()))
