@@ -3,7 +3,7 @@ import argparse
 
 import pandas as pd
 
-from src.pipeline_steps.text_processing.text_processing_step import TextPreprocessingStep
+from text_processing_step import TextPreprocessingStep
 
 
 def main():
