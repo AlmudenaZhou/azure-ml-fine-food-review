@@ -5,8 +5,8 @@ from src.pipeline_steps.training_data_cleaning.create_training_data_cleaning_com
 
 
 def main():
-    # create_training_data_cleaning_component()
-    create_text_processing_component()
+    create_training_data_cleaning_component()
+    # create_text_processing_component()
 
 
 if __name__ == "__main__":

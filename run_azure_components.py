@@ -1,0 +1,4 @@
+from src.pipeline_steps.training_data_cleaning.create_training_data_cleaning_component import run_training_data_cleaning_component
+
+
+run_training_data_cleaning_component()
