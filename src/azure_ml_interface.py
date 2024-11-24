@@ -1,9 +1,11 @@
+import datetime
 import os
 import time
 
 import logging
 import shutil
 from tempfile import TemporaryDirectory
+import uuid
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import ComputeInstance
@@ -122,9 +124,16 @@ class AzureMLInterface:
 
     def run_component(self, component_name, inputs, outputs=None, compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
                       component_version=None, wait_for_completion=False):
+        
+        def generate_job_name(base_name="job"):
+            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            unique_id = uuid.uuid4().hex[:8]  # Shortened UUID for readability
+            return f"{base_name}_{timestamp}_{unique_id}"
 
         component = self.ml_client.components.get(name=component_name, version=component_version)
+        name = generate_job_name(base_name="job")
         job = command(
+            name=name,
             component=component,
             inputs=inputs,
             outputs=outputs,
@@ -134,11 +143,11 @@ class AzureMLInterface:
         returned_job = self.ml_client.jobs.create_or_update(job)
 
         if wait_for_completion:
-            status = "Running"
-            print("Running")
+            status = returned_job.status
             i = 0
             while (status not in ["CancelRequested", "Completed", "Failed", "Canceled", "NotResponding"]):
+                returned_job = self.ml_client.jobs.get(name=name)
                 status = returned_job.status
                 time.sleep(1)
                 i += 1
-                print(f"Status at second {i}: {status}")
+                logger.debug(f"Status at second {i}: {status}")
