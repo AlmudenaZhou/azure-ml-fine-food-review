@@ -1,9 +1,9 @@
 import os
 import logging.config
 
-from src.pipeline_steps.text_processing.create_text_processing_component import run_text_processing_component
+from src.pipeline_steps.text_processing.manage_text_processing_component import run_text_processing_component
 from src.azure_ml_interface import AzureMLInterface
-from src.pipeline_steps.training_data_cleaning.create_training_data_cleaning_component import run_training_data_cleaning_component
+from src.pipeline_steps.training_data_cleaning.manage_training_data_cleaning_component import run_training_data_cleaning_component
 
 
 logging.config.fileConfig('logger.conf')
