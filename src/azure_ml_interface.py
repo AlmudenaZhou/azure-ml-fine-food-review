@@ -43,13 +43,15 @@ class AzureMLInterface:
 
     def run_a_command_job(self, experiment_name, code_folder="./src", command_line="python train.py",
                           environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
-                          compute="aml-cluster",):
+                          compute="aml-cluster", environment_variables=None):
+
         job = command(
             code=code_folder,
             command=command_line,
             environment=environment,
             compute=compute,
-            experiment_name=experiment_name
+            experiment_name=experiment_name,
+            environment_variables=environment_variables
         )
         logger.info("Launching the command")
         # connect to workspace and submit job
@@ -121,24 +123,27 @@ class AzureMLInterface:
         print(
             f"Component {component.name} with Version {component.version} is registered"
         )
+    
+    @staticmethod
+    def generate_job_name(base_name="job"):
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        unique_id = uuid.uuid4().hex[:8]  # Shortened UUID for readability
+        return f"{base_name}_{timestamp}_{unique_id}"
 
     def run_component(self, component_name, inputs, outputs=None, compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
-                      component_version=None, wait_for_completion=False):
-        
-        def generate_job_name(base_name="job"):
-            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-            unique_id = uuid.uuid4().hex[:8]  # Shortened UUID for readability
-            return f"{base_name}_{timestamp}_{unique_id}"
+                      component_version=None, wait_for_completion=False, environment_variables=None):
 
-        component = self.ml_client.components.get(name=component_name, version=component_version)
-        name = generate_job_name(base_name="job")
+        component = self.ml_client.components.get(name=component_name, version=component_version,)
+        name = self.generate_job_name(base_name="job")
+
         job = command(
             name=name,
             component=component,
             inputs=inputs,
             outputs=outputs,
             compute=compute_instance,
-            environment=component.environment
+            environment=component.environment,
+            environment_variables=environment_variables
         )
         returned_job = self.ml_client.jobs.create_or_update(job)
 
