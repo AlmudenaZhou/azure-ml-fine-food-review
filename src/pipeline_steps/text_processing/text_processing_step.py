@@ -1,14 +1,18 @@
+import os
+import sys
 import logging
 
 from nltk.tokenize import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
-from .sentence_cleaning_classes import (RemoveAbbreviations, RemoveHtml,
-                                        RemoveNumbers, RemovePatterns,
-                                        RemovePunctuations, RemoveUrl)
-from .text_processing_functions import (lemmatize_text,
-                                        remove_stopwords,
-                                        stem_text)
+sys.path.append(os.path.dirname(__file__))
+
+from sentence_cleaning_classes import (RemoveAbbreviations, RemoveHtml,
+                                       RemoveNumbers, RemovePatterns,
+                                       RemovePunctuations, RemoveUrl)
+from text_processing_functions import (lemmatize_text,
+                                       remove_stopwords,
+                                       stem_text)
 
 
 class TextPreprocessingStep:
