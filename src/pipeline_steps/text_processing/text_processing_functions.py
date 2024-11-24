@@ -1,8 +1,6 @@
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-from spellchecker import SpellChecker
 from nltk.stem.snowball import SnowballStemmer
 
 
@@ -40,6 +38,8 @@ def remove_stopwords(tokens):
 
 
 def correct_spelling(tokens):
+    from spellchecker import SpellChecker
+    
     spell = SpellChecker()
     tokens = [spell.correction(word) for word in tokens]
     tokens = filter(None, tokens)
