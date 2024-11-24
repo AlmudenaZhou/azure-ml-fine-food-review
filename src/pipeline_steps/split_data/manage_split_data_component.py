@@ -25,8 +25,8 @@ def create_split_data_component():
         outputs=dict(
             split_data=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/text_processing",
-        command="""python text_processing_component.py \
+        code="./src/pipeline_steps/split_data",
+        command="""python split_data_component.py \
                 --input_data ${{inputs.input_data}} \
                 --split_data ${{outputs.split_data}} \
                 """,
@@ -54,7 +54,7 @@ def run_split_data_component(wait_for_completion=False):
         "input_data": folder_path + "/preprocessed_data.csv",
     }
     outputs = {
-        "processed_data": data_output
+        "split_data": data_output
     }
     azure_ml_interface.run_component(component_name=component_name, inputs=inputs, outputs=outputs,
                                      compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),

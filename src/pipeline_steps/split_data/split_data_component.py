@@ -15,7 +15,7 @@ def main():
     print(" ".join(f"{k}={v}" for k, v in vars(args).items()))
     print("input data:", args.input_data)
 
-    data = pd.read_csv(args.input_data, header=1)
+    data = pd.read_csv(args.input_data)
 
     X_train, X_test, y_train, y_test = SplitDataStep().main(data)
 
