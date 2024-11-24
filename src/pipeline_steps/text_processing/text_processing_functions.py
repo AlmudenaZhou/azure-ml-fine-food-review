@@ -35,12 +35,3 @@ def remove_stopwords(tokens):
     tokens = [token for token in tokens if token not in custom_stopwords]
     tokens = filter(None, tokens)
     return tokens
-
-
-def correct_spelling(tokens):
-    from spellchecker import SpellChecker
-    
-    spell = SpellChecker()
-    tokens = [spell.correction(word) for word in tokens]
-    tokens = filter(None, tokens)
-    return tokens
