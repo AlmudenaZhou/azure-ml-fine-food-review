@@ -3,12 +3,12 @@ import logging
 from nltk.tokenize import word_tokenize
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 
-from src.pipeline_steps.text_processing.sentence_cleaning_classes import (RemoveAbbreviations, RemoveHtml,
-                                                                          RemoveNumbers, RemovePatterns,
-                                                                          RemovePunctuations, RemoveUrl)
-from src.pipeline_steps.text_processing.text_processing_functions import (lemmatize_text,
-                                                                          remove_stopwords,
-                                                                          stem_text)
+from .sentence_cleaning_classes import (RemoveAbbreviations, RemoveHtml,
+                                        RemoveNumbers, RemovePatterns,
+                                        RemovePunctuations, RemoveUrl)
+from .text_processing_functions import (lemmatize_text,
+                                        remove_stopwords,
+                                        stem_text)
 
 
 class TextPreprocessingStep:
