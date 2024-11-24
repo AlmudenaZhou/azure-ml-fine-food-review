@@ -51,14 +51,16 @@ def run_split_data_component(wait_for_completion=False):
 
     data_output = Output(type="uri_folder", path=folder_path)
     inputs = {
-        "input_data": folder_path + "/preprocessed_data.csv",
+        "input_data": folder_path + "/processed_data.csv",
     }
     outputs = {
         "split_data": data_output
     }
+    environment_variables = {"TEST_SIZE": os.environ["TEST_SIZE"]}
     azure_ml_interface.run_component(component_name=component_name, inputs=inputs, outputs=outputs,
                                      compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
-                                     component_version=None, wait_for_completion=wait_for_completion)
+                                     component_version=None, wait_for_completion=wait_for_completion,
+                                     environment_variables=environment_variables)
 
 
 if __name__ == "__main__":
