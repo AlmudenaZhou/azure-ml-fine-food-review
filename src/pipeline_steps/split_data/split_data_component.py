@@ -3,7 +3,7 @@ import argparse
 
 import pandas as pd
 
-from src.pipeline_steps.split_data.split_data_step import SplitDataStep
+from split_data_step import SplitDataStep
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
     X_train, X_test, y_train, y_test = SplitDataStep().main(data)
 
     X_train.to_csv(os.path.join(args.split_data, "X_train.csv"), index=False)
-    X_test.to_csv(os.path.join(args.split_data, "X_train.X_test"), index=False)
+    X_test.to_csv(os.path.join(args.split_data, "X_test.csv"), index=False)
     y_train.to_csv(os.path.join(args.split_data, "y_train.csv"), index=False)
     y_test.to_csv(os.path.join(args.split_data, "y_test.csv"), index=False)
 
