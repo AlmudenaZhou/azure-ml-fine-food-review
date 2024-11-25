@@ -1,29 +1,26 @@
-import os
 import logging.config
 
+from src.pipeline_steps.model_training.manage_model_training_component import run_model_training_component
+from src.pipeline_steps.handle_imbalance.manage_handle_imbalance_component import run_handle_imbalance_component
+from src.pipeline_steps.text2vector.manage_text2vector_component import run_text2vector_component
 from src.pipeline_steps.split_data.manage_split_data_component import run_split_data_component
 from src.pipeline_steps.text_processing.manage_text_processing_component import run_text_processing_component
-from src.azure_ml_interface import AzureMLInterface
 from src.pipeline_steps.training_data_cleaning.manage_training_data_cleaning_component import run_training_data_cleaning_component
+from src.tools.azure_ml_utils import manage_compute_instance_starting
 
 
 logging.config.fileConfig('logger.conf')
 logger = logging.getLogger(__name__)
 
-def main():
-    azure_ml_interface = AzureMLInterface()
-    compute_name = os.getenv("COMPUTE_INSTANCE_NAME")
-    comp_status = azure_ml_interface.get_compute_status(compute_name)
-    logger.info("Compute instance Status:", comp_status.state)
-    if comp_status.state == 'Stopped':
-        azure_ml_interface.start_compute(compute_name)
-        while comp_status.state != "Running":
-            comp_status = azure_ml_interface.get_compute_status(compute_name)
-            time.sleep(2)
 
+def main():
+    manage_compute_instance_starting()
     run_training_data_cleaning_component(wait_for_completion=True)
     run_text_processing_component(wait_for_completion=True)
     run_split_data_component(wait_for_completion=True)
+    run_text2vector_component(wait_for_completion=True)
+    run_handle_imbalance_component(wait_for_completion=True)
+    run_model_training_component()
 
 
 if __name__ == "__main__":
