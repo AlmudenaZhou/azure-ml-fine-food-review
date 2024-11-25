@@ -1,3 +1,4 @@
+import os
 import pickle
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -8,11 +9,12 @@ from sklearn.model_selection import cross_val_score
 
 class ModelTrainingStep:
 
-    def __init__(self):
+    def __init__(self, model_path='models/best_model.pickle'):
         self.model_dict = {'logreg': LogisticRegression(),
                            'SVC': SVC(),
                            'dectree': DecisionTreeClassifier()}
         self.best_model = None
+        self.model_path = model_path
         
     def _choose_best_model(self, X_train, y_train,
                            scoring='f1_macro', cv=10):
@@ -29,12 +31,13 @@ class ModelTrainingStep:
         self.best_model.fit(X_train, y_train)
 
     @staticmethod
-    def save_model(best_model):
-        with open('models/best_model.pickle', 'wb') as file:
+    def save_model(best_model, model_path):
+        with open(model_path, 'wb') as file:
             pickle.dump(best_model, file, protocol=pickle.HIGHEST_PROTOCOL)
 
     def main(self, X_train, y_train):
-        self.best_model = self._choose_best_model(X_train, y_train)
+        scoring = os.environ["SCORING"]
+        self.best_model = self._choose_best_model(X_train, y_train, scoring)
         self._train_best_model(X_train, y_train)
-        self.save_model(self.best_model)
+        self.save_model(self.best_model, self.model_path)
         return self.best_model
