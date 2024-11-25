@@ -4,6 +4,12 @@ import pandas as pd
 
 from gensim.models import Word2Vec
 from nltk.tokenize import word_tokenize
+import nltk
+
+
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
 
 
 class Word2VecModel:
