@@ -20,7 +20,8 @@ def create_text_processing_component():
         display_name="Text processing for training",
         description="Get the text data and make sentence and tokens processing",
         inputs={
-            "input_data": Input(type="uri_file"),
+            "input_data_folder": Input(type="uri_folder"),
+            "input_data_filename": Input(type="string"),
             "processed_filename": Input(type="string", optional=True, default="processed_data.csv"),
         },
         outputs=dict(
@@ -28,7 +29,8 @@ def create_text_processing_component():
         ),
         code="./src/pipeline_steps/text_processing",
         command="""python text_processing_component.py \
-                --input_data ${{inputs.input_data}} --processed_filename $[[processed_data.csv]] \
+                --input_data_folder ${{inputs.input_data_folder}} --input_data_filename ${{inputs.input_data_filename}}\
+                --processed_filename $[[processed_data.csv]] \
                 --processed_data ${{outputs.processed_data}}\
                 """,
         environment=f'{env_name}:{env_version}',
@@ -53,7 +55,8 @@ def run_text_processing_component(wait_for_completion=False):
 
     data_output = Output(type="uri_folder", path=folder_path)
     inputs = {
-        "input_data": folder_path + "/cleaned_data.csv",
+        "input_data_folder": folder_path,
+        "input_data_filename": "cleaned_data.csv",
     }
     outputs = {
         "processed_data": data_output

@@ -33,11 +33,12 @@ class Text2VectorStep:
 
     def _choose_best_text_to_vector_model(self, X_train, y_train):
         all_scores = {}
+        scoring = os.getenv("SCORING", "f1_macro")
         for model_name, model in self.text2vec_models.items():
             logger.info(f"Starting {model_name} training")
             dummy_model = self.dummy_model()
             new_x_train = model.fit_transform(X_train)
-            all_scores[model_name] = cross_val_score(dummy_model, new_x_train, y_train, cv=10, scoring=os.environ["SCORING"])
+            all_scores[model_name] = cross_val_score(dummy_model, new_x_train, y_train, cv=10, scoring=scoring)
 
         all_scores = pd.DataFrame(all_scores).T
         best_model_name = all_scores.mean(axis=1).idxmax()

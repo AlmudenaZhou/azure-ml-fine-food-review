@@ -20,14 +20,24 @@ def create_split_data_component():
         display_name="Split data for training",
         description="Split data in x_train, y_train, x_test, y_test",
         inputs={
-            "input_data": Input(type="uri_file")
+            "input_data_folder": Input(type="uri_folder"),
+            "input_data_filename": Input(type="string"),
+            "x_train_filename": Input(type="string", optional=True, default="X_train.csv"),
+            "x_test_filename": Input(type="string", optional=True, default="X_test.csv"),
+            "y_train_filename": Input(type="string", optional=True, default="y_train.csv"),
+            "y_test_filename": Input(type="string", optional=True, default="y_test.csv"),
         },
         outputs=dict(
             split_data=Output(type="uri_folder", mode="rw_mount")
         ),
         code="./src/pipeline_steps/split_data",
         command="""python split_data_component.py \
-                --input_data ${{inputs.input_data}} \
+                --input_data_folder ${{inputs.input_data_folder}}\
+                --input_data_filename ${{inputs.input_data_filename}}\
+                --x_train_filename $[[X_train.csv]] \
+                --x_test_filename $[[X_test.csv]] \
+                --y_train_filename $[[y_train.csv]] \
+                --y_test_filename $[[y_test.csv]] \
                 --split_data ${{outputs.split_data}} \
                 """,
         environment=f'{env_name}:{env_version}',
@@ -51,7 +61,8 @@ def run_split_data_component(wait_for_completion=False):
 
     data_output = Output(type="uri_folder", path=folder_path)
     inputs = {
-        "input_data": folder_path + "/processed_data.csv",
+        "input_data_folder": folder_path,
+        "input_data_filename": "processed_data.csv",
     }
     outputs = {
         "split_data": data_output

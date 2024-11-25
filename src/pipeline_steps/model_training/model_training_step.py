@@ -26,7 +26,7 @@ class ModelTrainingStep:
         best_model_name = all_results.mean(axis=1).idxmax()
         best_model = self.model_dict[best_model_name]
         return best_model
-    
+
     def _train_best_model(self, X_train, y_train):
         self.best_model.fit(X_train, y_train)
 
@@ -36,7 +36,7 @@ class ModelTrainingStep:
             pickle.dump(best_model, file, protocol=pickle.HIGHEST_PROTOCOL)
 
     def main(self, X_train, y_train):
-        scoring = os.environ["SCORING"]
+        scoring = os.getenv("SCORING", "f1_macro")
         self.best_model = self._choose_best_model(X_train, y_train, scoring)
         self._train_best_model(X_train, y_train)
         self.save_model(self.best_model, self.model_path)

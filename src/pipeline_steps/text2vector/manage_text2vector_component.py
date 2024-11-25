@@ -6,7 +6,7 @@ from azure.ai.ml import Input, Output
 from src.azure_ml_interface import AzureMLInterface
 
 
-def create_text2vector_cleaning_component():
+def create_text2vector_component():
     azure_ml_interface = AzureMLInterface()
 
     env_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
@@ -21,8 +21,10 @@ def create_text2vector_cleaning_component():
         description=("Gets a csv with X_train and y_train and converts the X_train to vector" 
          "and saves the model used."),
         inputs={
-            "input_x": Input(type="uri_file"),
-            "input_y": Input(type="uri_file"),
+            "input_data_folder": Input(type="uri_folder"),
+            "input_x_filename": Input(type="string"),
+            "input_y_filename": Input(type="string"),
+            "text2vec_data_filename": Input(type="string", default="text2vect_X_train.csv")
         },
         outputs=dict(
             model_path=Output(type="uri_file"),
@@ -30,7 +32,9 @@ def create_text2vector_cleaning_component():
         ),
         code="./src/pipeline_steps/text2vector",
         command="""python text2vector_component.py \
-                --input_x ${{inputs.input_x}} --input_y ${{inputs.input_y}} \
+                --input_data_folder ${{inputs.input_data_folder}}\
+                --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
+                --text2vec_data_filename $[[text2vect_X_train.csv]] \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
                 """,
         environment=f'{env_name}:{env_version}',
@@ -57,18 +61,14 @@ def run_text2vector_component(wait_for_completion=False):
     model_path = os.path.join(folder_path, "best_text2vec_model.pickle")
     model_path = Output(type="uri_file", path=model_path)
 
-    input_x = folder_path + "/X_train.csv"
-    input_y = folder_path + "/y_train.csv"
-    print("input_x", input_x)
-    print("input_y", input_y)
-
     inputs = {
-        "input_x": input_x,
-        "input_y": input_y
+        "input_data_folder": folder_path,
+        "input_x_filename": "X_train.csv",
+        "input_y_filename": "y_train.csv"
     }
     outputs = {"model_path": model_path, "output_folder_path": output_folder_path}
 
-    environment_variables = {"SCORING": os.environ["SCORING"]}
+    environment_variables = {"SCORING": os.getenv("SCORING", "f1_macro")}
     azure_ml_interface.run_component(component_name=component_name, inputs=inputs, outputs=outputs,
                                      compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
                                      component_version=None, wait_for_completion=wait_for_completion,
@@ -79,4 +79,4 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
 
     load_dotenv()
-    create_text2vector_cleaning_component()
+    create_text2vector_component()

@@ -6,7 +6,7 @@ from azure.ai.ml import Input, Output
 from src.azure_ml_interface import AzureMLInterface
 
 
-def create_model_training_cleaning_component():
+def create_model_training_component():
     azure_ml_interface = AzureMLInterface()
 
     env_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
@@ -15,13 +15,14 @@ def create_model_training_cleaning_component():
         env_version = env.version
         break
 
-    model_training_cleaning_component = command(
+    model_training_component = command(
         name="model_training",
         display_name="Simple model training",
         description=("Tests 3 types of models and chooses the best one. Not scalable to big amount of data."),
         inputs={
-            "input_x": Input(type="uri_file"),
-            "input_y": Input(type="uri_file"),
+            "input_data_folder": Input(type="uri_folder"),
+            "input_x_filename": Input(type="string"),
+            "input_y_filename": Input(type="string"),
         },
         outputs=dict(
             model_path=Output(type="uri_file"),
@@ -29,14 +30,15 @@ def create_model_training_cleaning_component():
         ),
         code="./src/pipeline_steps/model_training",
         command="""python model_training_component.py \
-                --input_x ${{inputs.input_x}} --input_y ${{inputs.input_y}} \
+                --input_data_folder ${{inputs.input_data_folder}}\
+                --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
                 """,
         environment=f'{env_name}:{env_version}',
     )
 
     print("Environment used: ", f'{env_name}:{env_version}')
-    azure_ml_interface.create_component_from_component(model_training_cleaning_component)
+    azure_ml_interface.create_component_from_component(model_training_component)
 
 
 def run_model_training_component(wait_for_completion=False):
@@ -56,12 +58,10 @@ def run_model_training_component(wait_for_completion=False):
     model_path = os.path.join(folder_path, "predictor.pickle")
     model_path = Output(type="uri_file", path=model_path)
 
-    input_x = folder_path + "/imb_X_train.csv"
-    input_y = folder_path + "/imb_y_train.csv"
-
     inputs = {
-        "input_x": input_x,
-        "input_y": input_y
+        "input_data_folder": folder_path,
+        "input_x_filename": "imb_X_train.csv",
+        "input_y_filename": "imb_y_train.csv",
     }
     outputs = {"model_path": model_path, "output_folder_path": output_folder_path}
 
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
 
     load_dotenv()
-    create_model_training_cleaning_component()
+    create_model_training_component()

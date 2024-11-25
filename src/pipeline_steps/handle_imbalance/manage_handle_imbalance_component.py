@@ -6,7 +6,7 @@ from azure.ai.ml import Input, Output
 from src.azure_ml_interface import AzureMLInterface
 
 
-def create_handle_imbalance_cleaning_component():
+def create_handle_imbalance_component():
     azure_ml_interface = AzureMLInterface()
 
     env_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
@@ -15,14 +15,17 @@ def create_handle_imbalance_cleaning_component():
         env_version = env.version
         break
 
-    handle_imbalance_cleaning_component = command(
+    handle_imbalance_component = command(
         name="handle_imbalance",
         display_name="Uses techniques to overcome the imbalance labels",
         description=("Tests 4 methods to sample the data, chooses the best one and"
                      " returns the new sampled data."),
         inputs={
-            "input_x": Input(type="uri_file"),
-            "input_y": Input(type="uri_file"),
+            "input_data_folder": Input(type="uri_folder"),
+            "input_x_filename": Input(type="string"),
+            "input_y_filename": Input(type="string"),
+            "imb_x_data_filename": Input(type="string", default="imb_X_train.csv"),
+            "imb_y_data_filename": Input(type="string", default="imb_y_train.csv"),
         },
         outputs=dict(
             model_path=Output(type="uri_file"),
@@ -30,14 +33,16 @@ def create_handle_imbalance_cleaning_component():
         ),
         code="./src/pipeline_steps/handle_imbalance",
         command="""python handle_imbalance_component.py \
-                --input_x ${{inputs.input_x}} --input_y ${{inputs.input_y}} \
+                --input_data_folder ${{inputs.input_data_folder}}\
+                --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
+                --imb_x_data_filename $[[imb_X_train.csv]] --imb_y_data_filename $[[imb_y_train.csv]]\
                 """,
         environment=f'{env_name}:{env_version}',
     )
 
     print("Environment used: ", f'{env_name}:{env_version}')
-    azure_ml_interface.create_component_from_component(handle_imbalance_cleaning_component)
+    azure_ml_interface.create_component_from_component(handle_imbalance_component)
 
 
 def run_handle_imbalance_component(wait_for_completion=False):
@@ -57,12 +62,10 @@ def run_handle_imbalance_component(wait_for_completion=False):
     model_path = os.path.join(folder_path, "best_imb_model.pickle")
     model_path = Output(type="uri_file", path=model_path)
 
-    input_x = folder_path + "/text2vect_X_train.csv"
-    input_y = folder_path + "/y_train.csv"
-
     inputs = {
-        "input_x": input_x,
-        "input_y": input_y
+        "input_data_folder": folder_path,
+        "input_x_filename": "text2vect_X_train.csv",
+        "input_y_filename": "y_train.csv",
     }
     outputs = {"model_path": model_path, "output_folder_path": output_folder_path}
 
@@ -75,4 +78,4 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
 
     load_dotenv()
-    create_handle_imbalance_cleaning_component()
+    create_handle_imbalance_component()
