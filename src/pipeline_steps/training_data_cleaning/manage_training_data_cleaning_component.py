@@ -28,7 +28,7 @@ def create_training_data_cleaning_component():
         ),
         code="./src/pipeline_steps/training_data_cleaning",
         command="""python training_data_cleaning_component.py \
-                --data ${{inputs.data}} --clean_filename $[[cleaned_data.csv]] \
+                --data ${{inputs.data}} $[[--clean_filename ${{inputs.clean_filename}}]] \
                 --clean_data ${{outputs.clean_data}}\
                 """,
         environment=f'{env_name}:{env_version}',

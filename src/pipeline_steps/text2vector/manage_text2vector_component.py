@@ -24,7 +24,7 @@ def create_text2vector_component():
             "input_data_folder": Input(type="uri_folder"),
             "input_x_filename": Input(type="string"),
             "input_y_filename": Input(type="string"),
-            "text2vec_data_filename": Input(type="string", default="text2vect_X_train.csv")
+            "text2vec_data_filename": Input(type="string", optional=True, default="text2vect_X_train.csv")
         },
         outputs=dict(
             model_path=Output(type="uri_file"),
@@ -34,7 +34,7 @@ def create_text2vector_component():
         command="""python text2vector_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
-                --text2vec_data_filename $[[text2vect_X_train.csv]] \
+                $[[--text2vec_data_filename ${{inputs.text2vec_data_filename}}]] \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
                 """,
         environment=f'{env_name}:{env_version}',

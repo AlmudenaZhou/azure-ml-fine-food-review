@@ -30,7 +30,7 @@ def create_text_processing_component():
         code="./src/pipeline_steps/text_processing",
         command="""python text_processing_component.py \
                 --input_data_folder ${{inputs.input_data_folder}} --input_data_filename ${{inputs.input_data_filename}}\
-                --processed_filename $[[processed_data.csv]] \
+                $[[--processed_filename ${{inputs.processed_filename}}]] \
                 --processed_data ${{outputs.processed_data}}\
                 """,
         environment=f'{env_name}:{env_version}',

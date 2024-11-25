@@ -24,8 +24,8 @@ def create_handle_imbalance_component():
             "input_data_folder": Input(type="uri_folder"),
             "input_x_filename": Input(type="string"),
             "input_y_filename": Input(type="string"),
-            "imb_x_data_filename": Input(type="string", default="imb_X_train.csv"),
-            "imb_y_data_filename": Input(type="string", default="imb_y_train.csv"),
+            "imb_x_data_filename": Input(type="string", optional=True, default="imb_X_train.csv"),
+            "imb_y_data_filename": Input(type="string", optional=True, default="imb_y_train.csv"),
         },
         outputs=dict(
             model_path=Output(type="uri_file"),
@@ -36,7 +36,7 @@ def create_handle_imbalance_component():
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
-                --imb_x_data_filename $[[imb_X_train.csv]] --imb_y_data_filename $[[imb_y_train.csv]]\
+                $[[--imb_x_data_filename ${{inputs.imb_x_data_filename}}]] $[[--imb_y_data_filename ${{inputs.imb_y_data_filename}}]]\
                 """,
         environment=f'{env_name}:{env_version}',
     )

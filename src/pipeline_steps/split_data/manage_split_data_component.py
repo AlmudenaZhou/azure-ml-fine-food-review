@@ -34,10 +34,10 @@ def create_split_data_component():
         command="""python split_data_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_data_filename ${{inputs.input_data_filename}}\
-                --x_train_filename $[[X_train.csv]] \
-                --x_test_filename $[[X_test.csv]] \
-                --y_train_filename $[[y_train.csv]] \
-                --y_test_filename $[[y_test.csv]] \
+                $[[--x_train_filename  ${{inputs.x_train_filename}}]] \
+                $[[--x_test_filename  ${{inputs.x_test_filename}}]] \
+                $[[--y_train_filename ${{inputs.y_train_filename}}]] \
+                $[[--y_test_filename  ${{inputs.y_test_filename}}]] \
                 --split_data ${{outputs.split_data}} \
                 """,
         environment=f'{env_name}:{env_version}',
