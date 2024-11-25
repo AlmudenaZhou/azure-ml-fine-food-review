@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class HandleImbalanceStep:
 
-    def __init__(self):
+    def __init__(self, model_path='models/best_imb_model.pickle'):
         self.dummy_model = LogisticRegression
 
         self.imb_models = {'base': "base",
@@ -23,6 +23,7 @@ class HandleImbalanceStep:
                            'oversampling': RandomOverSampler(),
                            'smote': SMOTE()}
         self.best_imb_model = None
+        self.model_path = model_path
 
     def _individual_imb_model_train(self, model, X_train_orig, y_train_orig):
         ss = ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
@@ -54,8 +55,8 @@ class HandleImbalanceStep:
         return self.imb_models[best_model_name]
     
     @staticmethod
-    def save_model(best_imb_model):
-        with open('models/best_imb_model.pickle', 'wb') as file:
+    def save_model(best_imb_model, model_path):
+        with open(model_path, 'wb') as file:
             pickle.dump(best_imb_model, file, protocol=pickle.HIGHEST_PROTOCOL)
     
     def main(self, X_train, y_train):
@@ -67,7 +68,7 @@ class HandleImbalanceStep:
         if self.best_imb_model != "base":
             X_train, y_train = self.best_imb_model.fit_resample(X_train, y_train)
             logger.info("Resampled with the model")
-            self.save_model(self.best_imb_model)
+            self.save_model(self.best_imb_model, self.model_path)
             logger.info("Imb model saved")
             X_train = pd.DataFrame(X_train, columns=train_columns)
 
