@@ -1,4 +1,5 @@
 import os
+import sys
 import pickle
 import logging
 
@@ -8,14 +9,16 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 
-from src.pipeline_steps.text2vector.word2vec_model import Word2VecModel
+sys.path.append(os.path.dirname(__file__))
+
+from word2vec_model import Word2VecModel
 
 
 logger = logging.getLogger(__name__)
 
 class Text2VectorStep:
 
-    def __init__(self):
+    def __init__(self, model_path='models/best_text2vec.pickle'):
 
         self.dummy_model = LogisticRegression
 
@@ -25,7 +28,8 @@ class Text2VectorStep:
                                 'tfidf_ngram2': TfidfVectorizer(ngram_range=(1, 2), max_features=300),
                                 'word2vec': Word2VecModel(min_count=1, window=10, vector_size=300, sample=6e-5,
                                                           alpha=0.03, min_alpha=0.0007, negative=20)}
-        self.best_text2vec = None    
+        self.best_text2vec = None
+        self.model_path = model_path
 
     def _choose_best_text_to_vector_model(self, X_train, y_train):
         all_scores = {}
@@ -42,11 +46,11 @@ class Text2VectorStep:
         return best_text2vec
 
     @staticmethod
-    def save_model(best_text2vec):
-        with open('models/best_text2vec.pickle', 'wb') as file:
+    def save_model(best_text2vec, model_path):
+        with open(model_path, 'wb') as file:
             pickle.dump(best_text2vec, file, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def main(self, X_train, y_train):
+    def main_train(self, X_train, y_train):
 
         if self.best_text2vec is None:
             best_text2vec = self._choose_best_text_to_vector_model(X_train=X_train, y_train=y_train)
@@ -56,6 +60,6 @@ class Text2VectorStep:
 
         X_train = pd.DataFrame(X_train, index=y_train.index)
         logger.info("Resampled with the model")
-        self.save_model(best_text2vec=best_text2vec)
+        Text2VectorStep.save_model(best_text2vec=best_text2vec, model_path=self.model_path)
         logger.info("Text to Vec model saved")
         return X_train, y_train
