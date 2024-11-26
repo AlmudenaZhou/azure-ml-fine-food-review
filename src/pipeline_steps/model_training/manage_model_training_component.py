@@ -23,15 +23,17 @@ def create_model_training_component():
             "input_data_folder": Input(type="uri_folder"),
             "input_x_filename": Input(type="string"),
             "input_y_filename": Input(type="string"),
+            "model_filename": Input(type="string", optional=True, default="model.pkl"),
         },
         outputs=dict(
-            model_path=Output(type="uri_file"),
+            model_path=Output(type="uri_folder"),
             output_folder_path=Output(type="uri_folder", mode="rw_mount")
         ),
         code="./src/pipeline_steps/model_training",
         command="""python model_training_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
+                $[[--model_filename ${{inputs.model_filename}}]] \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
                 """,
         environment=f'{env_name}:{env_version}',
@@ -55,13 +57,13 @@ def run_model_training_component(wait_for_completion=False):
     folder_path = "/".join(folder_path.split("/")[:-1]) 
 
     output_folder_path = Output(type="uri_folder", path=folder_path)
-    model_path = os.path.join(folder_path, "predictor.pickle")
-    model_path = Output(type="uri_file", path=model_path)
+    model_path = Output(type="uri_folder", path=folder_path)
 
     inputs = {
         "input_data_folder": folder_path,
         "input_x_filename": "imb_X_train.csv",
         "input_y_filename": "imb_y_train.csv",
+        "model_filename": "model.pkl"
     }
     outputs = {"model_path": model_path, "output_folder_path": output_folder_path}
 
