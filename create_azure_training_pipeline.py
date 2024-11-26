@@ -108,9 +108,15 @@ def main():
         pipeline_job_registered_model_name
     )
 
+    environment_variables = {"SUBSCRIPTION_ID": subscription_id,
+                             "RESOURCE_GROUP": resource_group,
+                             "WORKSPACE": workspace,
+                             "TEST_SIZE": os.getenv("TEST_SIZE"),
+                             "SCORING": os.getenv("SCORING"),}
+
     # submit the pipeline job
     azure_ml_interface = AzureMLInterface()
-    azure_ml_interface.register_pipeline_from_job_pipeline(pipeline_job)
+    azure_ml_interface.register_pipeline_from_job_pipeline(pipeline_job, environment_variables)
 
 
 if __name__ == "__main__":
