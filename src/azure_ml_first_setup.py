@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 if __name__ == "__main__":
     sys.path.append(os.getcwd())
 
-from azure_ml_interface import AzureMLInterface
+from src.azure_ml_interface import AzureMLInterface
 
 
 load_dotenv()
