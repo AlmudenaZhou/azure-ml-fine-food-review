@@ -30,7 +30,7 @@ class TrainingDataCleaningStep:
     def label_score(score):
         if int(score) >= 4:
             return 1
-        elif int(score) <= 2:
+        elif int(score) <= 3:
             return 0
         else:
             return None
