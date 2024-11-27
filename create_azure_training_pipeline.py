@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from azure.ai.ml import dsl, Input
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 logging.config.fileConfig('logger.conf')
@@ -28,6 +28,7 @@ def fine_food_reviews_pipeline(
     imb_x_data_filename="imb_X_train.csv",
     imb_y_data_filename="imb_y_train.csv",
 ):
+
     azure_ml_interface = AzureMLInterface()
 
     training_data_cleaning_comp = azure_ml_interface.get_component("training_data_cleaning")
@@ -53,6 +54,7 @@ def fine_food_reviews_pipeline(
         input_data_filename=cleaned_data_filename,
         processed_filename=processed_data_filename
     )
+
     # using train_func like a python call with its own inputs
     split_data_job = split_data_comp(
         input_data_folder=text_processing_job.outputs.processed_data,
