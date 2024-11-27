@@ -3,7 +3,7 @@ import os
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 def create_handle_imbalance_component():
@@ -31,7 +31,7 @@ def create_handle_imbalance_component():
             model_path=Output(type="uri_file"),
             output_folder_path=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/handle_imbalance",
+        code="./src/training_pipeline/handle_imbalance",
         command="""python handle_imbalance_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \

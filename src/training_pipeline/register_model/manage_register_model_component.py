@@ -3,7 +3,7 @@ import os
 from azure.ai.ml import command
 from azure.ai.ml import Input
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 def create_register_model_component():
@@ -23,7 +23,7 @@ def create_register_model_component():
             "model_path": Input(type="uri_folder"),
         },
         outputs=dict(),
-        code="./src/pipeline_steps/register_model",
+        code="./src/training_pipeline/register_model",
         command="""python register_model_component.py \
                 --model_path ${{inputs.model_path}}\
                 """,

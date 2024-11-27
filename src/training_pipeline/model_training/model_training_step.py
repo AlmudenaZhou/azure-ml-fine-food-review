@@ -22,7 +22,7 @@ class ModelTrainingStep:
         mlflow.autolog()
         with mlflow.start_run():
             all_scores = [cross_val_score(model, X_train, y_train,
-                                        cv=cv, scoring=scoring)
+                                          cv=cv, scoring=scoring)
                         for model in self.model_dict.values()]
             all_results = pd.DataFrame(all_scores, index=self.model_dict.keys())
             best_model_name = all_results.mean(axis=1).idxmax()

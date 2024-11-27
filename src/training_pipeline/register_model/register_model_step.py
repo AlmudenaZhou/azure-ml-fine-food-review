@@ -9,21 +9,26 @@ from azure.identity import DefaultAzureCredential
 class RegisterModelStep:
 
     def __init__(self):
-        pass
-
-    def main(self, model_path):
         subscription_id = os.getenv("SUBSCRIPTION_ID")
         resource_group = os.getenv("RESOURCE_GROUP")
         workspace = os.getenv("WORKSPACE")
+        self.ml_client = MLClient(DefaultAzureCredential(), subscription_id, resource_group, workspace)
 
-        ml_client = MLClient(
-            DefaultAzureCredential(), subscription_id, resource_group, workspace
-        )
+    def register_model(self, model_path, model_name, model_version, model_type):
 
         file_model = Model(
             path=model_path,
-            type=AssetTypes.CUSTOM_MODEL,
-            name="fine_food_reviews_model",
+            type=model_type,
+            name=model_name,
             description="Model to predict whether the review is positive or negative.",
+            version=model_version
         )
-        ml_client.models.create_or_update(file_model)
+        model = self.ml_client.models.create_or_update(file_model)
+        return model
+
+    def main(self, model_params_dict: dict):
+        models = {}
+        for model_name, model_params in model_params_dict.items():
+            model = self.register_model(**model_params)
+            models[model_name] = model
+        return models

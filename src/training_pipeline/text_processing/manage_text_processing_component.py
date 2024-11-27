@@ -3,7 +3,7 @@ import os
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 def create_text_processing_component():
@@ -27,7 +27,7 @@ def create_text_processing_component():
         outputs=dict(
             processed_data=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/text_processing",
+        code="./src/training_pipeline/text_processing",
         command="""python text_processing_component.py \
                 --input_data_folder ${{inputs.input_data_folder}} --input_data_filename ${{inputs.input_data_filename}}\
                 $[[--processed_filename ${{inputs.processed_filename}}]] \

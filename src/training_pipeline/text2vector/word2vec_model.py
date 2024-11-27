@@ -5,6 +5,7 @@ import pandas as pd
 from gensim.models import Word2Vec
 from nltk.tokenize import word_tokenize
 import nltk
+import mlflow.pyfunc
 
 
 nltk.download('stopwords')
@@ -12,7 +13,7 @@ nltk.download('punkt')
 nltk.download('wordnet')
 
 
-class Word2VecModel:
+class Word2VecModel(mlflow.pyfunc.PythonModel):
 
     def __init__(self, min_count=1, window=10, vector_size=300, sample=6e-5, alpha=0.03,
                  min_alpha=0.0007, negative=20):
@@ -60,6 +61,9 @@ class Word2VecModel:
         data_wv = self._text_to_vec(x)
         data_wv.index = x.index
         return data_wv
+    
+    def predict(self, context, model_input):
+        return self.transform(model_input)
 
     def fit_transform(self, x, **kwags):
         self.fit(x, **kwags)

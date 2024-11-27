@@ -71,15 +71,17 @@ class AzureMLInterface:
 
         self.ml_client.data.create_or_update(my_data)
 
-    def create_custom_model_from_local_file(self, local_filepath, description="Model created from local file.",
-                                            name="", version="0"):
+    def register_model_from_file(self, filepath, model_type=AssetTypes.CUSTOM_MODEL, description="Model created from local file.",
+                                 name="", version=0):
         file_model = Model(
-            path=local_filepath,
-            type=AssetTypes.CUSTOM_MODEL,
+            path=filepath,
+            type=model_type,
             name=name,
             description=description,
+            version=version
         )
-        self.ml_client.models.create_or_update(file_model)
+        model = self.ml_client.models.create_or_update(file_model)
+        return model
 
     def create_compute_instance(self, ci_basic_name, ci_size="Standard_DS11_v2"):
         logger.info("Creating Compute Instance: ", ci_basic_name)
@@ -174,6 +176,7 @@ class AzureMLInterface:
         registered_pipeline = self.ml_client.jobs.create_or_update(pipeline_job, 
                                                                    environment_variables=environment_variables)
         logger.info(f"Pipeline registered with name: {registered_pipeline.name}")
+        return registered_pipeline
 
     def run_pipeline_by_pipeline_name(self, pipeline_name):
         self.ml_client.jobs.stream(pipeline_name)

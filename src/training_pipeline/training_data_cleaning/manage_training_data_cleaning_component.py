@@ -3,7 +3,7 @@ import os
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 def create_training_data_cleaning_component():
@@ -26,7 +26,7 @@ def create_training_data_cleaning_component():
         outputs=dict(
             clean_data=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/training_data_cleaning",
+        code="./src/training_pipeline/training_data_cleaning",
         command="""python training_data_cleaning_component.py \
                 --data ${{inputs.data}} $[[--clean_filename ${{inputs.clean_filename}}]] \
                 --clean_data ${{outputs.clean_data}}\

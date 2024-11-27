@@ -2,8 +2,8 @@ import os
 
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
+from src.tools.azure_ml_interface import AzureMLInterface
 
-from src.azure_ml_interface import AzureMLInterface
 
 
 def create_split_data_component():
@@ -30,7 +30,7 @@ def create_split_data_component():
         outputs=dict(
             split_data=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/split_data",
+        code="./src/training_pipeline/split_data",
         command="""python split_data_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_data_filename ${{inputs.input_data_filename}}\

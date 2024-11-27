@@ -3,7 +3,7 @@ import os
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 def create_text2vector_component():
@@ -15,7 +15,7 @@ def create_text2vector_component():
         env_version = env.version
         break
 
-    text2vector_cleaning_component = command(
+    text2vector_component = command(
         name="text2vector",
         display_name="Text dataframe or series to vector using a model",
         description=("Gets a csv with X_train and y_train and converts the X_train to vector" 
@@ -24,24 +24,26 @@ def create_text2vector_component():
             "input_data_folder": Input(type="uri_folder"),
             "input_x_filename": Input(type="string"),
             "input_y_filename": Input(type="string"),
-            "text2vec_data_filename": Input(type="string", optional=True, default="text2vect_X_train.csv")
+            "text2vec_data_filename": Input(type="string", optional=True, default="text2vect_X_train.csv"),
+            "text2vec_model_filename": Input(type="string", optional=True, default="text2vect.pkl")
         },
         outputs=dict(
-            model_path=Output(type="uri_file"),
+            model_path=Output(type="uri_folder"),
             output_folder_path=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/text2vector",
+        code="./src/training_pipeline/text2vector",
         command="""python text2vector_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
                 $[[--text2vec_data_filename ${{inputs.text2vec_data_filename}}]] \
+                $[[--text2vec_model_filename ${{inputs.text2vec_model_filename}}]] \
                 --model_path ${{outputs.model_path}} --output_folder_path ${{outputs.output_folder_path}}\
                 """,
         environment=f'{env_name}:{env_version}',
     )
 
     print("Environment used: ", f'{env_name}:{env_version}')
-    azure_ml_interface.create_component_from_component(text2vector_cleaning_component)
+    azure_ml_interface.create_component_from_component(text2vector_component)
 
 
 def run_text2vector_component(wait_for_completion=False):

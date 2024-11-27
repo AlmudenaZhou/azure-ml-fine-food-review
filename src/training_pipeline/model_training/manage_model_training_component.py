@@ -3,7 +3,7 @@ import os
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 def create_model_training_component():
@@ -29,7 +29,7 @@ def create_model_training_component():
             model_path=Output(type="uri_folder"),
             output_folder_path=Output(type="uri_folder", mode="rw_mount")
         ),
-        code="./src/pipeline_steps/model_training",
+        code="./src/training_pipeline/model_training",
         command="""python model_training_component.py \
                 --input_data_folder ${{inputs.input_data_folder}}\
                 --input_x_filename ${{inputs.input_x_filename}} --input_y_filename ${{inputs.input_y_filename}} \
