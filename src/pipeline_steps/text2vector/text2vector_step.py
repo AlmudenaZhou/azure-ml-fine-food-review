@@ -3,6 +3,7 @@ import sys
 import pickle
 import logging
 
+import mlflow
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
@@ -35,10 +36,17 @@ class Text2VectorStep:
         all_scores = {}
         scoring = os.getenv("SCORING", "f1_macro")
         for model_name, model in self.text2vec_models.items():
-            logger.info(f"Starting {model_name} training")
-            dummy_model = self.dummy_model()
-            new_x_train = model.fit_transform(X_train)
-            all_scores[model_name] = cross_val_score(dummy_model, new_x_train, y_train, cv=10, scoring=scoring)
+            with mlflow.start_run(run_name=f"{model_name}-run"):
+                logger.info(f"Starting {model_name} training")
+                dummy_model = self.dummy_model()
+                new_x_train = model.fit_transform(X_train)
+                mlflow.log_param("model_name", model_name)
+                all_scores[model_name] = cross_val_score(dummy_model, new_x_train, y_train, cv=10, scoring=scoring)
+                mlflow.log_param(f"scoring_metric", scoring)
+                for fold_idx, score in enumerate(all_scores[model_name]):
+                    mlflow.log_metric(f"{scoring}_fold_{fold_idx+1}", score)
+                mean_score = all_scores[model_name].mean()
+                mlflow.log_metric(f"{scoring}_mean", mean_score)
 
         all_scores = pd.DataFrame(all_scores).T
         best_model_name = all_scores.mean(axis=1).idxmax()
