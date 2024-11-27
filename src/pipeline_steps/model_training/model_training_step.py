@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import cross_val_score
+import mlflow
 
 
 class ModelTrainingStep:
@@ -18,13 +19,14 @@ class ModelTrainingStep:
         
     def _choose_best_model(self, X_train, y_train,
                            scoring='f1_macro', cv=10):
-
-        all_scores = [cross_val_score(model, X_train, y_train,
-                                      cv=cv, scoring=scoring)
-                    for model in self.model_dict.values()]
-        all_results = pd.DataFrame(all_scores, index=self.model_dict.keys())
-        best_model_name = all_results.mean(axis=1).idxmax()
-        best_model = self.model_dict[best_model_name]
+        mlflow.autolog()
+        with mlflow.start_run():
+            all_scores = [cross_val_score(model, X_train, y_train,
+                                        cv=cv, scoring=scoring)
+                        for model in self.model_dict.values()]
+            all_results = pd.DataFrame(all_scores, index=self.model_dict.keys())
+            best_model_name = all_results.mean(axis=1).idxmax()
+            best_model = self.model_dict[best_model_name]
         return best_model
 
     def _train_best_model(self, X_train, y_train):
