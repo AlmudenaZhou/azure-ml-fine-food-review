@@ -8,7 +8,7 @@ from training_data_cleaning_step import TrainingDataCleaningStep
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_data_folder", type=str, help="name of the input file data")
+    parser.add_argument("--input_data_folder", type=str, help="path to data")
     parser.add_argument("--input_data_filename", type=str, help="name of the input file data")
     parser.add_argument("--output_data_folder", type=str, help="path to cleaned data")
     parser.add_argument("--output_data_filename", type=str, help="path to cleaned data",
