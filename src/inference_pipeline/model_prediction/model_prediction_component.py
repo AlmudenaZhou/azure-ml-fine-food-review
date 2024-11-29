@@ -19,11 +19,11 @@ def main():
 
     print(" ".join(f"{k}={v}" for k, v in vars(args).items()))
 
-    data_x = pd.read_csv(os.path.join(args.input_data_filename, ))
+    data_x = pd.read_csv(args.input_data_folder + "/" + args.input_data_filename)
 
-    preds = ModelPredictionStep().main(model=args.model, data_x=data_x)
+    preds = ModelPredictionStep().main(model_path=args.model, data_x=data_x)
 
-    preds.to_csv(os.path.join(args.output_data_folder, args.output_data_filename), index=False)
+    preds.to_csv(args.output_data_folder + "/" + args.output_data_filename, index=False)
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ def create_text_processing_inference_component():
         command="""python text_processing_component.py \
                 --input_data_filename ${{inputs.input_data_filename}}\
                 --input_data_folder ${{inputs.input_data_folder}}\
-                [[--output_data_filename ${{inputs.output_data_filename}}]]\
+                $[[--output_data_filename ${{inputs.output_data_filename}}]]\
                 --output_data_folder ${{outputs.output_data_folder}}\
                 """,
         environment=f'{env_name}:{env_version}',

@@ -17,11 +17,11 @@ def main():
 
     print(" ".join(f"{k}={v}" for k, v in vars(args).items()))
 
-    data_x = pd.Series(pd.read_csv(os.path.join(args.input_data_folder, args.input_data_filename)))
+    data_x = pd.read_csv(args.input_data_folder + "/" + args.input_data_filename)
+    data_x = data_x.Text
+    vector_data = Text2VectorStep().main(model_path=args.model, data_x=data_x)
 
-    vector_data = Text2VectorStep().main(model=args.model, data_x=data_x)
-
-    vector_data.to_csv(os.path.join(args.output_data_folder, args.output_data_filename), index=False)
+    vector_data.to_csv(args.output_data_folder + "/" + args.output_data_filename, index=False)
 
 
 if __name__ == "__main__":
