@@ -67,7 +67,8 @@ class Text2VectorStep:
         if not isinstance(X_train, np.ndarray):
             X_train = X_train.toarray()
 
-        X_train = pd.DataFrame(X_train, index=y_train.index)
+        X_train = pd.DataFrame(X_train, index=y_train.index, 
+                               column="Text")
         logger.info("Resampled with the model")
         Text2VectorStep.save_model(best_text2vec=best_text2vec, model_path=self.model_path)
         logger.info("Text to Vec model saved")
