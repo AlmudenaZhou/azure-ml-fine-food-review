@@ -22,7 +22,7 @@ def run_text2vector_component(wait_for_completion=False):
     model_filename = "text2vector.pkl"
     inputs, outputs = generic_running_component_inputs_outputs(input_data_filename, output_data_filename,
                                                                model_filename, is_model=True)
-    environment_variables = {"SCORING": os.environ["SCORING"]}
+    environment_variables = {"SCORING": os.environ["SCORING"], "TEXT_COLNAME": "Text", "TARGET": "Label"}
     run_azure_component("text2vector", inputs, outputs, wait_for_completion, environment_variables)
 
 

@@ -17,9 +17,32 @@ from word2vec_model import Word2VecModel
 
 logger = logging.getLogger(__name__)
 
+
 class Text2VectorStep:
 
-    def __init__(self, model_path='models/best_text2vec.pickle'):
+    def __init__(self, text_colname, target, model_path='models/best_text2vec.pickle'):
+
+        self.text_colname = text_colname
+        self.target = target
+        self.model_path = model_path
+    
+    def main(self, train_data, is_training):
+        if is_training:
+            training_text2vec_step = TrainingText2VectorStep(self.text_colname, self.target, 
+                                                             self.model_path)
+            train_data = training_text2vec_step.main(train_data)
+        else:
+            inference_text2vec_step = InferenceText2VectorStep(self.target, self.model_path)
+            train_data = inference_text2vec_step.main(train_data)
+        return train_data
+
+
+class TrainingText2VectorStep:
+
+    def __init__(self, text_colname, target, model_path):
+        self.text_colname = text_colname
+        self.target = target
+        self.model_path = model_path
 
         self.dummy_model = LogisticRegression
 
@@ -30,7 +53,6 @@ class Text2VectorStep:
                                 'word2vec': Word2VecModel(min_count=1, window=10, vector_size=300, sample=6e-5,
                                                           alpha=0.03, min_alpha=0.0007, negative=20)}
         self.best_text2vec = None
-        self.model_path = model_path
 
     def _choose_best_text_to_vector_model(self, X_train, y_train):
         all_scores = {}
@@ -59,7 +81,12 @@ class Text2VectorStep:
         with open(model_path, 'wb') as file:
             pickle.dump(best_text2vec, file, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def main_train(self, X_train, y_train):
+    def main(self, train_data):
+        
+        X_train = train_data[self.text_colname]
+        y_train = train_data[self.target]
+
+        print(X_train.head())
 
         if self.best_text2vec is None:
             best_text2vec = self._choose_best_text_to_vector_model(X_train=X_train, y_train=y_train)
@@ -67,9 +94,37 @@ class Text2VectorStep:
         if not isinstance(X_train, np.ndarray):
             X_train = X_train.toarray()
 
-        X_train = pd.DataFrame(X_train, index=y_train.index, 
-                               column="Text")
+        X_train = pd.DataFrame(X_train, index=y_train.index)
         logger.info("Resampled with the model")
-        Text2VectorStep.save_model(best_text2vec=best_text2vec, model_path=self.model_path)
+        self.save_model(best_text2vec=best_text2vec, model_path=self.model_path)
         logger.info("Text to Vec model saved")
-        return X_train, y_train
+
+        train_data = pd.concat([X_train, y_train], axis=1)
+        return train_data
+    
+
+class InferenceText2VectorStep:
+
+    def __init__(self, text_colname, model_path):
+        self.text_colname = text_colname
+        self.model_path = model_path
+
+    @staticmethod
+    def load_model(model_path):
+        with open(model_path, "rb") as file:
+            model = pickle.load(file)
+
+        return model
+
+    def main(self, train_data):
+
+        data_x = train_data[self.text_colname]
+        model = self.load_model(self.model_path)
+
+        data_transf = model.transform(data_x)
+
+        if not isinstance(data_transf, np.ndarray):
+            data_transf = data_transf.toarray()
+
+        data_transf = pd.DataFrame(data_transf, index=data_x.index)
+        return data_transf
