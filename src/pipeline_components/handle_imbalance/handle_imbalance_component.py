@@ -9,27 +9,26 @@ from handle_imbalance_step import HandleImbalanceStep
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_data_folder", type=str, help="path to data")
-    parser.add_argument("--input_x_filename", type=str, help="filename to features data")
-    parser.add_argument("--input_y_filename", type=str, help="filename to label data")
-
-    parser.add_argument("--imb_x_data_filename", type=str, help="path to x train modified",
-                        default="imb_X_train.csv", required=False)
-    parser.add_argument("--imb_y_data_filename", type=str, help="path to y train modified",
-                        default="imb_y_train.csv", required=False)
-
-    parser.add_argument("--model_path", type=str, help="path to the model")
-    parser.add_argument("--output_folder_path", type=str, help="path to the output folder")
+    parser.add_argument("--input_data_filename", type=str, help="name of the input file data")
+    parser.add_argument("--output_data_folder", type=str, help="path to sampled data")
+    parser.add_argument("--output_data_filename", type=str, help="filename to sampled data",
+                        required=False, default="handled_imb_data.csv")
+    parser.add_argument("--model_filename", type=str, help="model file name")
+    parser.add_argument("--model_input_folder", type=str, default="", required=False,
+                        help="folder to load the model if exists")
+    parser.add_argument("--model_output_folder", type=str, help="folder to save the model")
+    parser.add_argument("--is_training", type=str, help="If the component is for training, value `True`")
     args = parser.parse_args()
 
     print(" ".join(f"{k}={v}" for k, v in vars(args).items()))
 
-    X_train = pd.read_csv(os.path.join(args.input_data_folder, args.input_x_filename))
-    y_train = pd.Series(pd.read_csv(os.path.join(args.input_data_folder, args.input_y_filename)).iloc[:, 0])
+    train_data = pd.read_csv(os.path.join(args.input_data_folder, args.input_data_filename))
 
-    X_train, y_train = HandleImbalanceStep(model_path=args.model_path).main(X_train, y_train)
+    model_path = os.path.join(args.model_output_folder, args.model_filename)
+    target = os.getenv("TARGET", "Label")
+    train_data = HandleImbalanceStep(target=target, model_path=model_path).main(train_data)
 
-    X_train.to_csv(os.path.join(args.output_folder_path, args.imb_x_data_filename), index=False)
-    y_train.to_csv(os.path.join(args.output_folder_path, args.imb_y_data_filename), index=False)
+    train_data.to_csv(os.path.join(args.output_data_folder, args.output_data_filename))
 
 
 if __name__ == "__main__":

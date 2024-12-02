@@ -16,8 +16,9 @@ logger = logging.getLogger(__name__)
 
 class HandleImbalanceStep:
 
-    def __init__(self, model_path='models/best_imb_model.pickle'):
+    def __init__(self, target, model_path='models/best_imb_model.pickle'):
         self.dummy_model = LogisticRegression
+        self.target = target
 
         self.imb_models = {'base': "base",
                            'undersampling': RandomUnderSampler(),
@@ -54,7 +55,6 @@ class HandleImbalanceStep:
                 mlflow.log_metric("mean_score", sum(ind_results) / len(ind_results))
             all_results[model_name] = ind_results
 
-
         all_results = pd.DataFrame(all_results).T
         best_model_name = all_results.mean(axis=1).idxmax()
         logger.info(f"Imbalanced model chosen: {best_model_name}")
@@ -65,7 +65,10 @@ class HandleImbalanceStep:
         with open(model_path, 'wb') as file:
             pickle.dump(best_imb_model, file, protocol=pickle.HIGHEST_PROTOCOL)
     
-    def main(self, X_train, y_train):
+    def main(self, train_data):
+        X_train = train_data.drop(self.target, axis=1)
+        y_train = train_data[self.target]
+
         train_columns = X_train.columns
 
         if self.best_imb_model is None:
@@ -77,5 +80,5 @@ class HandleImbalanceStep:
             self.save_model(self.best_imb_model, self.model_path)
             logger.info("Imb model saved")
             X_train = pd.DataFrame(X_train, columns=train_columns)
-
-        return X_train, y_train
+        train_data = pd.concat([X_train, y_train], axis=1)
+        return train_data
