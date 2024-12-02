@@ -1,10 +1,9 @@
 
-from tools.azure_ml_utils import (create_azure_component, generic_running_component_inputs_outputs, 
-                                  generic_creation_component_inputs_outputs, run_azure_component)
+from src.tools.azure_ml_utils import (create_azure_component, generic_running_component_inputs_outputs,
+                                      generic_creation_component_inputs_outputs, run_azure_component)
 
 
-def create_training_data_cleaning_component(component_name, display_name, description, 
-                                            code_folder, code_filename):
+def create_training_data_cleaning_component():
     component_name = "training_data_cleaning"
     display_name = "Data cleaning for training"
     description = "Reads a .csv file and cleans duplicates and converts the labels"
@@ -19,7 +18,8 @@ def run_training_data_cleaning_component(wait_for_completion=False):
     input_data_filename = "reviews_short.csv"
     output_data_filename = "cleaned_data.csv"
     inputs, outputs = generic_running_component_inputs_outputs(input_data_filename, output_data_filename)
-    run_azure_component("training_data_cleaning", inputs, outputs, wait_for_completion)
+    run_azure_component(component_name="training_data_cleaning", inputs=inputs, outputs=outputs,
+                        wait_for_completion=wait_for_completion)
 
 
 def main():
