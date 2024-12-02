@@ -1,78 +1,60 @@
 import os
 
-from azure.ai.ml import command
 from azure.ai.ml import Input, Output
-from src.tools.azure_ml_interface import AzureMLInterface
-
+from src.tools.azure_ml_utils import create_azure_component, run_azure_component
 
 
 def create_split_data_component():
-    azure_ml_interface = AzureMLInterface()
+    component_name = "split_data"
+    display_name = "Split data into train and test for training"
+    description = "Split data in x_train, y_train, x_test, y_test and returns train_data and test_data"
+    code_folder = "./src/pipeline_components/split_data"
+    code_command = """python split_data_component.py \
+        --input_data_folder ${{inputs.input_data_folder}}\
+        --input_data_filename ${{inputs.input_data_filename}}\
+        $[[--train_output_filename  ${{inputs.train_output_filename}}]] \
+        $[[--test_output_filename  ${{inputs.test_output_filename}}]] \
+        --output_data_folder ${{outputs.output_data_folder}} \
+        """
 
-    env_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
-    envs = azure_ml_interface.ml_client.environments.list(name=env_name)
-    for env in envs:
-        env_version = env.version
-        break
-
-    split_data_component = command(
-        name="split_data",
-        display_name="Split data for training",
-        description="Split data in x_train, y_train, x_test, y_test",
-        inputs={
-            "input_data_folder": Input(type="uri_folder"),
-            "input_data_filename": Input(type="string"),
-            "x_train_filename": Input(type="string", optional=True, default="X_train.csv"),
-            "x_test_filename": Input(type="string", optional=True, default="X_test.csv"),
-            "y_train_filename": Input(type="string", optional=True, default="y_train.csv"),
-            "y_test_filename": Input(type="string", optional=True, default="y_test.csv"),
-        },
-        outputs=dict(
-            split_data=Output(type="uri_folder", mode="rw_mount")
-        ),
-        code="./src/training_pipeline/split_data",
-        command="""python split_data_component.py \
-                --input_data_folder ${{inputs.input_data_folder}}\
-                --input_data_filename ${{inputs.input_data_filename}}\
-                $[[--x_train_filename  ${{inputs.x_train_filename}}]] \
-                $[[--x_test_filename  ${{inputs.x_test_filename}}]] \
-                $[[--y_train_filename ${{inputs.y_train_filename}}]] \
-                $[[--y_test_filename  ${{inputs.y_test_filename}}]] \
-                --split_data ${{outputs.split_data}} \
-                """,
-        environment=f'{env_name}:{env_version}',
+    inputs = {
+        "input_data_folder": Input(type="uri_folder"),
+        "input_data_filename": Input(type="string"),
+        "train_output_filename": Input(type="string", optional=True, default="train_data.csv"),
+        "test_output_filename": Input(type="string", optional=True, default="test_data.csv"),
+    }
+    outputs = dict(
+        output_data_folder=Output(type="uri_folder", mode="rw_mount")
     )
-
-    print("Environment used: ", f'{env_name}:{env_version}')
-    azure_ml_interface.create_component_from_component(split_data_component)
+    create_azure_component(component_name, display_name, description, 
+                            inputs, outputs, code_folder, code_command)
 
 
 def run_split_data_component(wait_for_completion=False):
-    azure_ml_interface = AzureMLInterface()
-    component_name = "split_data"
+
     subscription_id = os.getenv("SUBSCRIPTION_ID")
     resource_group = os.getenv("RESOURCE_GROUP")
     workspace = os.getenv("WORKSPACE")
     relative_raw_data_uri = os.getenv("RELATIVE_URI_RAW_DATA")
 
-    folder_path = (f"azureml://subscriptions/{subscription_id}/resourcegroups/{resource_group}/workspaces/" +
-                   f"{workspace}/datastores/workspaceblobstore/paths/{relative_raw_data_uri}")
-    folder_path = "/".join(folder_path.split("/")[:-1]) 
+    data_uri = (f"azureml://subscriptions/{subscription_id}/resourcegroups/{resource_group}/workspaces/" +
+                f"{workspace}/datastores/workspaceblobstore/paths/{relative_raw_data_uri}")
+    
+    data_folder, _ = os.path.split(data_uri)
+    output_folder = Output(type="uri_folder", path=data_folder)
 
-    data_output = Output(type="uri_folder", path=folder_path)
     inputs = {
-        "input_data_folder": folder_path,
+        "input_data_folder": data_folder,
         "input_data_filename": "processed_data.csv",
+        "train_output_filename": "train_data.csv",
+        "test_output_filename": "test_data.csv"
     }
-    outputs = {
-        "split_data": data_output
-    }
-    environment_variables = {"TEST_SIZE": os.environ["TEST_SIZE"]}
-    azure_ml_interface.run_component(component_name=component_name, inputs=inputs, outputs=outputs,
-                                     compute_instance=os.getenv("COMPUTE_INSTANCE_NAME"),
-                                     component_version=None, wait_for_completion=wait_for_completion,
-                                     environment_variables=environment_variables)
+    outputs = {"output_data_folder": output_folder}
 
+    environment_variables = {"TEST_SIZE": os.environ["TEST_SIZE"]}
+    run_azure_component("split_data", inputs, outputs, wait_for_completion,
+                        environment_variables=environment_variables)
+    
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
