@@ -17,7 +17,8 @@ from text_processing_functions import (lemmatize_text,
 
 class TextPreprocessingStep:
 
-    def __init__(self):
+    def __init__(self, text_colname):
+        self.text_colname = text_colname
         self.processing_steps = {'sentence': [RemoveNumbers(), RemoveHtml(), RemoveUrl(),
                                               RemovePunctuations(), RemovePatterns(),
                                               RemoveAbbreviations()],
@@ -55,7 +56,7 @@ class TextPreprocessingStep:
         return text_df
 
     def main(self, data):
-        text_df = data['Text']
+        text_df = data[self.text_colname]
         processed_text_df = self.preprocess_text_workflow(text_df, tokenized=False)
-        data['Text'] = processed_text_df
-        return data.loc[:, ['Text', 'Label']]
+        data[self.text_colname] = processed_text_df
+        return data

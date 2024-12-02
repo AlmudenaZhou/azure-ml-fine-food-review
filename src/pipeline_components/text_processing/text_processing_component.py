@@ -20,7 +20,8 @@ def main():
 
     data = pd.read_csv(os.path.join(args.input_data_folder, args.input_data_filename))
 
-    processed_data = TextPreprocessingStep().main(data)
+    text_colname = os.getenv("TEXT_COLNAME", "Text")
+    processed_data = TextPreprocessingStep(text_colname).main(data)
 
     processed_data.to_csv(os.path.join(args.output_data_folder, args.output_data_filename), index=False)
 

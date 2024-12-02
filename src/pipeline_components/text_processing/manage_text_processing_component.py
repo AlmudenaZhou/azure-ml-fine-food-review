@@ -17,7 +17,9 @@ def run_text_processing_component(wait_for_completion=False):
     input_data_filename = "cleaned_data.csv"
     output_data_filename = "processed_data.csv"
     inputs, outputs = generic_running_component_inputs_outputs(input_data_filename, output_data_filename)
-    run_azure_component("text_processing", inputs, outputs, wait_for_completion)
+    environment_variables = {"TEXT_COLNAME": "Text"}
+    run_azure_component("text_processing", inputs, outputs, wait_for_completion,
+                        environment_variables=environment_variables)
 
 
 def main():
