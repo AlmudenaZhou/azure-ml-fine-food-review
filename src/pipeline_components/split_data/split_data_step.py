@@ -16,7 +16,7 @@ class SplitDataStep:
         logger.info("Splitting the data...")
 
         X_data = data.drop(self.target, axis=1)
-        y_data = data[[self.target]]
+        y_data = data[self.target]
         X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=test_size)
 
         train_data = pd.concat([X_train, y_train], axis=1)
