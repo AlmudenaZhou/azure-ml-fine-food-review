@@ -2,23 +2,23 @@
 
 ## Problem Statement
 
-This portfolio project focuses on deriving meaningful insights from customer reviews of fine food products sold on Amazon. By leveraging data analytics and machine learning, this project provides valuable insights into customer behavior, preferences, and satisfaction levels, helping businesses make informed decisions to better serve their clients.
+In today’s competitive market, understanding customer sentiment is crucial for improving product offerings and enhancing customer satisfaction. This project focuses on **extracting actionable insights from customer reviews** of fine food products on Amazon using **data analytics** and **machine learning techniques**. By analyzing these reviews, businesses can gain a deeper **understanding of customer preferences, behavior, and overall satisfaction**.
 
-**Purpose and Objectives:**
+The project leverages an **automated model** with a **training and inference pipeline**, allowing businesses to process large volumes of text data efficiently. The inference pipeline is **deployed to predict sentiment** from customer reviews **in batch**, with the flexibility to **extend to other text sources** such as tweets, emails, and more. This solution empowers businesses to make informed decisions and deliver personalized customer experiences, driving growth and customer loyalty.
+
+**Business Purpose and Objectives:**
 1. Comprehensive Review Analysis:
+- Analyze customer reviews to uncover meaningful patterns and trends.
+- Gain insights into overall customer sentiment toward products and identify key factors influencing satisfaction.
 
-- Explore and analyze customer reviews to uncover patterns and trends.
-- Understand overall customer sentiment toward products and identify key factors influencing satisfaction.
+1. Sentiment Prediction Model:
+- Develop a predictive model to estimate customer ratings based on their written reviews.
+- Leverage sentiment analysis to ensure alignment between textual reviews and ratings, while detecting anomalies such as "troll" reviews or inconsistent feedback.
+- Implement a generic text model to extend sentiment analysis capabilities beyond reviews, enabling analysis of various text formats such as tweets, emails, and social media posts.
 
-2. Sentiment Prediction Model:
-
-- Build a predictive model to estimate customer ratings based on their written reviews.
-- Use sentiment analysis to validate the alignment between textual reviews and ratings, while detecting anomalies such as potential “troll” reviews or inconsistent feedback.
-
-3. Actionable Insights for Business Impact:
-
-- Refine trend analysis for better business metrics.
-- Support decision-making processes related to customer satisfaction, product development, and feedback evaluation.
+1. Actionable Insights for Business Impact:
+- Enhance trend analysis to improve business metrics and performance.
+- Support data-driven decision-making in areas such as customer satisfaction, product development, and feedback evaluation.
 
 **Data used:** https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews/download?datasetVersionNumber=2
 Note: it will require you to log in Kaggle.
