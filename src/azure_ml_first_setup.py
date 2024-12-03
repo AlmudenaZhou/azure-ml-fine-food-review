@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 if __name__ == "__main__":
     sys.path.append(os.getcwd())
 
-from src.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
+from src.tools.create_azure_components import create_components
 
 
 load_dotenv()
@@ -32,6 +33,8 @@ def main():
     print("Creating Environment")
     environment_name = os.getenv("AZURE_ML_ENVIRONMENT_NAME")
     azure_ml_interface.create_environment_from_dockerfile(environment_name=environment_name)
+
+    create_components()
 
 
 if __name__ == "__main__":
