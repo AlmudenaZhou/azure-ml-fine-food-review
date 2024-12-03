@@ -14,8 +14,8 @@ def main():
     parser.add_argument("--output_data_filename", type=str, help="filename to sampled data",
                         required=False, default="handled_imb_data.csv")
     parser.add_argument("--model_filename", type=str, help="model file name")
-    parser.add_argument("--model_input_folder", type=str, default="", required=False,
-                        help="folder to load the model if exists")
+    parser.add_argument("--model_input_path", type=str, default="", required=False,
+                        help="path to load the model if exists")
     parser.add_argument("--model_output_folder", type=str, help="folder to save the model")
     parser.add_argument("--is_training", type=str, help="If the component is for training, value `True`")
     args = parser.parse_args()
