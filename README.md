@@ -17,7 +17,6 @@ This portfolio project focuses on deriving meaningful insights from customer rev
 
 3. Actionable Insights for Business Impact:
 
-- Provide recommendations to enhance data quality for future reviews.
 - Refine trend analysis for better business metrics.
 - Support decision-making processes related to customer satisfaction, product development, and feedback evaluation.
 
@@ -37,8 +36,17 @@ Note: it will require you to log in Kaggle.
 
 ### 1. Advanced Analytics:
 
+This section documents the key notebooks used for advanced analytics, detailing the techniques and processes applied in each notebook.
+
+The entire process was initially developed using a smaller dataset and is documented across the following notebooks:
+
 - **Data Cleaning and Validation:** Identified and resolved inconsistencies such as duplicate customer reviews and illogical data errors to locate potential trolls or bots. [Notebook](reports/1_training_data_cleaning.ipynb)
 - **Data Exploration:** Conducted trend analysis to explore relationships between products, users, and reviews, uncovering valuable insights about customer behavior. [Notebook](reports/2_data_exploration.ipynb)
+- **Data Preprocessing:** Focuses on transforming and cleaning the data to ensure it is properly prepared for model input [Notebook](reports/3_data_preprocessing.ipynb)
+- **Word2Vec Training:** Provides a comprehensive guide to training the Word2Vec model. [Notebook](reports/4_Word2Vec_training.ipynb)
+- **Comparing Different preprocess models:** Compares and explains the selected models for converting text to vectors and handling imbalanced datasets. [Notebook](reports/5_comparing_pretraining_models.ipynb)
+- **Model Training:** Tested the capacity of the models and if the task can be performed with them good enough. [Notebook](reports/5_comparing_pretraining_models.ipynb)
+- **Sentiment Analysis:** Tested the NLTK sentiment analysis model as a complement to a proprietary model, focusing on identifying and analyzing prediction mismatches. [Notebook](reports/SentimentAnalysis.ipynb)
 
 ### 2. Components from Azure ML
 
@@ -61,7 +69,6 @@ The details of each component:
 4. **Text to vector:** Converts processed text into vector representations using models like CountVectorizer, TfidfVectorizer, or Word2Vec. Additionally, uses cross-validation with a configurable dummy model to select the optimal representation method. [Step Script](src/pipeline_steps/split_data/split_data_step.py)
 5. **Handling Imbalance Dataset:** Tackles class imbalance by testing various resampling techniques using cross-validation, selecting the best method, and saving the resampled dataset. [Step Script](src/pipeline_steps/handle_imbalance/handle_imbalance_step.py)
 6. **Model Training/Prediction:** The training process evaluates DecisionTree, SVC, and LogisticRegression models through cross-validation, identifying and saving the best-performing model.
-
 
 ### 3. Training Pipeline:
 
@@ -94,7 +101,7 @@ Run this pipeline on [this script](./create_azure_inference_pipeline.py). After 
 
 ### Steps
 
-After having downloaded the data and put in the data folder:
+After having downloaded the data and put in the data folder (recommended to first create a smaller sample of the dataset for initial testing and experimentation):
 
 1. Create an Azure ML Workspace
 2. Fill the `.env` with the `.env_example` variables
@@ -108,4 +115,11 @@ After having downloaded the data and put in the data folder:
    - **TEXT2VEC_TRAINED_MODEL_PATH**: Datastore URI to the text-to-vector pickle.
    - **PREDICTOR_TRAINED_MODEL_PATH**: Datastore URI to the trained predictor pickle.
 7. Run [`create_azure_inference_pipeline.py`](./create_azure_inference_pipeline.py) to create and run the inference pipeline.
-8. Publish the inference pipeline to make it available for deployment and usage.
+8. Deploy the inference pipeline to make it available for deployment and usage.
+
+
+## Future Steps
+
+- Explore additional sentiment analysis models to improve detection of mismatches in subjective reviews.
+- Implement parallel processing to reduce training times when working with the full dataset.
+- Integrate AutoML and scoring components into the Azure training pipeline for enhanced model optimization.
