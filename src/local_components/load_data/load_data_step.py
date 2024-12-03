@@ -3,7 +3,7 @@ import logging
 
 import pandas as pd
 
-from tools.azure_ml_interface import AzureMLInterface
+from src.tools.azure_ml_interface import AzureMLInterface
 
 
 logger = logging.getLogger(__name__)
