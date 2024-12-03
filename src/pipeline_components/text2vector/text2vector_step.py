@@ -32,7 +32,7 @@ class Text2VectorStep:
                                                              self.model_path)
             train_data = training_text2vec_step.main(train_data)
         else:
-            inference_text2vec_step = InferenceText2VectorStep(self.target, self.model_path)
+            inference_text2vec_step = InferenceText2VectorStep(self.text_colname, self.model_path)
             train_data = inference_text2vec_step.main(train_data)
         return train_data
 
