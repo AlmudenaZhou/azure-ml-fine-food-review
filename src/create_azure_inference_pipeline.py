@@ -4,6 +4,12 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml import Input
 from azure.ai.ml.dsl import pipeline
 
+
+if __name__ == "__main__":
+    import sys
+
+    sys.path.append(os.getcwd())
+
 from src.local_components.register_model.register_model_step import RegisterModelStep
 from src.tools.azure_ml_interface import AzureMLInterface
 

@@ -4,6 +4,12 @@ from dotenv import load_dotenv
 
 from azure.ai.ml import dsl, Input
 
+
+if __name__ == "__main__":
+    import sys
+
+    sys.path.append(os.getcwd())
+
 from src.tools.azure_ml_interface import AzureMLInterface
 
 

@@ -1,9 +1,10 @@
 import os
-import sys
 
 from dotenv import load_dotenv
 
 if __name__ == "__main__":
+    import sys
+    
     sys.path.append(os.getcwd())
 
 from src.tools.azure_ml_interface import AzureMLInterface

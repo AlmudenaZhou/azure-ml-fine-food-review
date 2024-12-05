@@ -1,9 +1,13 @@
 import os
-
 import logging.config
-
 from dotenv import load_dotenv
+
 import pandas as pd
+
+if __name__ == "__main__":
+    import sys
+    
+    sys.path.append(os.getcwd())
 
 from src.tools.azure_ml_interface import AzureMLInterface
 from src.pipeline_components.split_data.split_data_step import SplitDataStep
