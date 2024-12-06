@@ -4,7 +4,7 @@
 
 In today’s competitive market, understanding customer sentiment is crucial for improving product offerings and enhancing customer satisfaction. This project focuses on **extracting actionable insights from customer reviews** of fine food products on Amazon using **data analytics** and **machine learning techniques**. By analyzing these reviews, businesses can gain a deeper **understanding of customer preferences, behavior, and overall satisfaction**.
 
-The project leverages an **automated model** with a **training and inference pipeline**, allowing businesses to process large volumes of text data efficiently. The inference pipeline is **deployed to predict sentiment** from customer reviews **in batch**, with the flexibility to **extend to other text sources** such as tweets, emails, and more. This solution empowers businesses to make informed decisions and deliver personalized customer experiences, driving growth and customer loyalty.
+The project leverages a **machine learning model** with an **automated training and inference pipeline**, allowing businesses to process large volumes of text data efficiently. The inference pipeline is **deployed to predict sentiment** from customer reviews **in batch**, with the flexibility to **extend to other text sources** such as tweets, emails, and more. This solution empowers businesses to make informed decisions and deliver personalized customer experiences, driving growth and customer loyalty.
 
 **Business Purpose and Objectives:**
 1. Comprehensive Review Analysis:
@@ -115,8 +115,27 @@ After having downloaded the data and put in the data folder (recommended to firs
    - **TEXT2VEC_TRAINED_MODEL_PATH**: Datastore URI to the text-to-vector pickle.
    - **PREDICTOR_TRAINED_MODEL_PATH**: Datastore URI to the trained predictor pickle.
 7. Run [`create_azure_inference_pipeline.py`](./create_azure_inference_pipeline.py) to create and run the inference pipeline.
-8. Deploy the inference pipeline to make it available for deployment and usage.
+8. Deploy the inference pipeline by running [`create_batch_deployment_for_inference_pipeline.py`](./src/create_batch_deployment_for_inference_pipeline.py). This makes the pipeline available for deployment and use.
+9. Specify the input for the job either in the .env file or directly within the script. Once the input is set, run the batch job using [`run_batch_job.py`](./src/run_batch_job.py).
 
+
+## Project structure
+
+### Overview of functionality
+
+- `data/`: stores the data locally
+- `models/`: stores the trained models locally
+- `mlruns/`: contains the mlflow data when running the training pipeline locally
+- `reports/`:  Includes all notebook experiments related to the training pipeline.
+- `src/`: Contains all code required to deploy and manage pipelines.
+
+### Details of the src directory
+- **Root level**: contains the key scripts executed directly for each step. These scripts handle common setup tasks: loading environment variables from .env, adding the working directory to the Python path and initializing the logger.
+- `pipeline_components/`: this directory organizes pipeline components into individual folders. Each folder contains three core files:
+  - `\<component_name>_step.py`: implements the core logic of the component. It is shared between the local and Azure ML pipelines.
+  - `\<component_name>_component.py`: Wraps the component logic into a main() function, defines inputs and outputs for integration with the Azure ML pipeline and prepares outputs as needed for downstream tasks.
+  - `manage_\<component_name>_component.py`: handles the creation and optional standalone execution of the component. The functions `create_azure_component` and `generic_creation_component_inputs_outputs`, located in [azure_ml_utils](./src/tools/azure_ml_utils.py), serve as templates or can be used directly to streamline component creation.
+- `local_components/`: Contains additional components required for local workflows or extra functionality not needed in the Azure ML pipeline.
 
 ## Future Steps
 
