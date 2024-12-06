@@ -27,11 +27,11 @@ def main():
     target = os.getenv("TARGET", "Label")
     model_path = args.model_input_path
     if not args.model_input_path:
-        model_path = os.path.join(args.model_output_folders, args.model_filename)
+        model_path = os.path.join(args.model_output_folder, args.model_filename)
     is_training = args.is_training == "True"
     preds = TrainPredictStep(target, model_path=model_path).main(train_data, is_training)
 
-    preds.to_csv(os.path.join(args.output_data_folder, args.output_data_filename))
+    preds.to_csv(os.path.join(args.output_data_folder, args.output_data_filename), index=False)
 
 
 if __name__ == "__main__":
