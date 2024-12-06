@@ -1,4 +1,5 @@
 import os
+import logging.config
 
 from dotenv import load_dotenv
 
@@ -10,6 +11,9 @@ if __name__ == "__main__":
 from src.tools.azure_ml_interface import AzureMLInterface
 from src.tools.create_azure_components import create_components
 
+
+logging.config.fileConfig('logger.conf')
+logger = logging.getLogger(__name__)
 
 load_dotenv()
         
