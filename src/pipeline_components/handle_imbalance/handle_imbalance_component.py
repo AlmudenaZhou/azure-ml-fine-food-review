@@ -28,7 +28,7 @@ def main():
     target = os.getenv("TARGET", "Label")
     train_data = HandleImbalanceStep(target=target, model_path=model_path).main(train_data)
 
-    train_data.to_csv(os.path.join(args.output_data_folder, args.output_data_filename))
+    train_data.to_csv(os.path.join(args.output_data_folder, args.output_data_filename), index=False)
 
 
 if __name__ == "__main__":
