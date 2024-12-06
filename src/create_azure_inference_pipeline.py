@@ -1,5 +1,7 @@
 import os
+import logging.config
 
+from dotenv import load_dotenv
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml import Input
 from azure.ai.ml.dsl import pipeline
@@ -12,6 +14,10 @@ if __name__ == "__main__":
 
 from src.local_components.register_model.register_model_step import RegisterModelStep
 from src.tools.azure_ml_interface import AzureMLInterface
+
+
+logging.config.fileConfig('logger.conf')
+logger = logging.getLogger(__name__)
 
 
 @pipeline(
@@ -87,8 +93,16 @@ def main():
 
 if __name__ == "__main__":
 
-    text2vec_model_path = os.getenv("TEXT2VEC_TRAINED_MODEL_PATH")
-    pred_model_path = os.getenv("PREDICTOR_TRAINED_MODEL_PATH")
+    load_dotenv()
+
+    subscription_id = os.getenv("SUBSCRIPTION_ID")
+    resource_group = os.getenv("RESOURCE_GROUP")
+    workspace = os.getenv("WORKSPACE")
+
+    standard_azure_ml_path = (f"azureml://subscriptions/{subscription_id}/resourcegroups/{resource_group}/workspaces/"
+                              + f"{workspace}/datastores/workspaceblobstore/paths/")
+    text2vec_model_path = standard_azure_ml_path + os.getenv("TEXT2VEC_TRAINED_MODEL_PATH")
+    pred_model_path = standard_azure_ml_path + os.getenv("PREDICTOR_TRAINED_MODEL_PATH")
 
     model_params = {
         "text2vec": {"model_path": text2vec_model_path, "model_name": "fine-food-reviews-text2vec", 
