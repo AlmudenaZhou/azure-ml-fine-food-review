@@ -12,7 +12,7 @@ from azure.ai.ml.entities import ComputeInstance
 from azure.ai.ml.entities import Environment, BuildContext
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 from azure.ai.ml import command
-from azure.ai.ml.entities import Data, Model
+from azure.ai.ml.entities import Data, Model, AmlCompute, BatchEndpoint, PipelineComponentBatchDeployment
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import ComputeInstance
 
@@ -69,7 +69,8 @@ class AzureMLInterface:
             version=version
         )
 
-        self.ml_client.data.create_or_update(my_data)
+        created_data = self.ml_client.data.create_or_update(my_data)
+        logger.info("Data Asset created with ID: %s", created_data.id)
 
     def register_model_from_file(self, filepath, model_type=AssetTypes.CUSTOM_MODEL, description="Model created from local file.",
                                  name="", version=0):
@@ -85,11 +86,56 @@ class AzureMLInterface:
 
     def create_compute_instance(self, ci_basic_name, ci_size="Standard_DS11_v2"):
         logger.info("Creating Compute Instance: ", ci_basic_name)
-        ci_basic = ComputeInstance(
-            name=ci_basic_name, 
-            size=ci_size
+        result = None
+        if not any(filter(lambda m: m.name == ci_basic_name, self.ml_client.compute.list())):
+            ci_basic = ComputeInstance(
+                name=ci_basic_name, 
+                size=ci_size
+            )
+            result = self.ml_client.begin_create_or_update(ci_basic).result()
+        return result
+
+    def create_compute_cluster(self, compute_name=None, min_instances=0, max_instances=5, 
+                               description="Batch endpoints compute cluster"):
+        compute_name = compute_name if compute_name else "batch-cluster"
+        result = None
+        if not any(filter(lambda m: m.name == compute_name, self.ml_client.compute.list())):
+            compute_cluster = AmlCompute(
+                name=compute_name,
+                description=description,
+                min_instances=min_instances,
+                max_instances=max_instances,
+            )
+            result = self.ml_client.begin_create_or_update(compute_cluster).result()
+        return result
+    
+    def create_batch_endpoint(self, endpoint_name):
+        endpoint = BatchEndpoint(
+            name=endpoint_name,
+            description="Batch scoring endpoint of the Heart Disease Data Set prediction task",
         )
-        self.ml_client.begin_create_or_update(ci_basic).result()
+
+        return self.ml_client.batch_endpoints.begin_create_or_update(endpoint).result()
+
+    def create_pipeline_component_batch_deployment(self, deployment_name, pipeline_component, endpoint_name, default_compute_name):
+        deployment = PipelineComponentBatchDeployment(
+            name=deployment_name,
+            description="Deployment from a pipeline component.",
+            endpoint_name=endpoint_name,
+            component=pipeline_component,
+            settings={"continue_on_step_failure": False, "default_compute": default_compute_name},
+        )
+
+        return self.ml_client.batch_deployments.begin_create_or_update(deployment).result()
+    
+    def configure_deployment_as_default_in_endpoint(self, endpoint_name, deployment_name):
+        endpoint = self.ml_client.batch_endpoints.get(endpoint_name)
+        endpoint.defaults.deployment_name = deployment_name
+        return self.ml_client.batch_endpoints.begin_create_or_update(endpoint).result()
+
+    def get_batch_endpoint_from_name(self, endpoint_name):
+        endpoint = self.ml_client.batch_endpoints.get(name=endpoint_name)
+        return endpoint
 
     def get_compute_status(self, ci_basic_name):
         logger.info("Getting the status from Compute Instance: ", ci_basic_name)
