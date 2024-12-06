@@ -30,7 +30,7 @@ class TrainingPipeline:
 
     def __init__(self):
         self.train_data_steps = [Text2VectorStep, HandleImbalanceStep]
-        self.pospreprocess_data = os.getenv("POSPREPROCESS_DATA_FILE")
+        self.pospreprocess_data_file = os.getenv("POSPREPROCESS_DATA_FILE")
         self.text_colname = os.getenv("TEXT_COLNAME")
         self.target = os.getenv("TARGET")
         if os.getenv("ENVIRONMENT") != "local":
@@ -58,13 +58,15 @@ class TrainingPipeline:
     def main(self, input_data_uri=None):
 
         logger.info("Starting training pipeline")
-        data = self.pospreprocess_data
-        if not data:
+        data_file = self.pospreprocess_data_file
+        if not data_file:
             logger.info("Starting all data steps...")
             data = LoadDataStep(input_data_uri).main()
             data = TrainingDataCleaningStep().main(data)
             data = TextPreprocessingStep(self.text_colname).main(data)
-            data.to_csv("data/preprocessed_data.csv")
+            data.to_csv("data/preprocessed_data.csv", index=False)
+        else:
+            data = pd.read_csv(data)
 
         train_data, test_data = SplitDataStep(self.target).main(data)
         text2vec_step = Text2VectorStep(self.text_colname, self.target, "models/text2vec_model.pkl")
