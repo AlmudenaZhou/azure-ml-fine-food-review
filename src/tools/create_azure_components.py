@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 def create_components():
 
+    create_training_data_cleaning_component()
+    logger.info("Finished training data cleaning component")
+
     create_text_processing_component()
     logger.info("Finished text processing component")
 
