@@ -118,7 +118,7 @@ After having downloaded the data and put in the data folder (recommended to firs
 8. Deploy the inference pipeline by running [`create_batch_deployment_for_inference_pipeline.py`](./src/create_batch_deployment_for_inference_pipeline.py). This makes the pipeline available for deployment and use.
 9. Ensure you have the necessary permissions before running a job in the new deployment. For example, you can use the role `AzureML Data Scientist` to gain access.
 10. Specify the input for the job either in the `.env` file or directly within the script. Once the input is set, run the batch job using [`run_batch_job.py`](./src/run_batch_job.py).
-
+11. In the Azure Portal, configure the `Schedule` for the inference or training pipeline job to automate the MLOps retraining process. To complete the MLOps cycle, you can update the dataset with a new version and schedule a data pipeline to replace the current data before triggering the retraining job.
 
 ## Project structure
 
@@ -142,4 +142,6 @@ After having downloaded the data and put in the data folder (recommended to firs
 
 - Explore additional sentiment analysis models to improve detection of mismatches in subjective reviews.
 - Implement parallel processing to reduce training times when working with the full dataset.
-- Integrate AutoML and scoring components into the Azure training pipeline for enhanced model optimization.
+- Integrate AutoML component into the Azure training pipeline to optimize model performance.
+- Add a scoring and evaluation component to assess model accuracy and performance metrics.
+- Establish CI/CD pipelines using GitHub Actions for streamlined deployment and testing workflows.
