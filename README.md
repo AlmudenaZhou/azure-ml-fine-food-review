@@ -116,7 +116,8 @@ After having downloaded the data and put in the data folder (recommended to firs
    - **PREDICTOR_TRAINED_MODEL_PATH**: Datastore URI after `/path/` to the trained predictor pickle.
 7. Run [`create_azure_inference_pipeline.py`](./create_azure_inference_pipeline.py) to create and run the inference pipeline.
 8. Deploy the inference pipeline by running [`create_batch_deployment_for_inference_pipeline.py`](./src/create_batch_deployment_for_inference_pipeline.py). This makes the pipeline available for deployment and use.
-9. Specify the input for the job either in the `.env` file or directly within the script. Once the input is set, run the batch job using [`run_batch_job.py`](./src/run_batch_job.py).
+9. Ensure you have the necessary permissions before running a job in the new deployment. For example, you can use the role `AzureML Data Scientist` to gain access.
+10. Specify the input for the job either in the `.env` file or directly within the script. Once the input is set, run the batch job using [`run_batch_job.py`](./src/run_batch_job.py).
 
 
 ## Project structure
