@@ -111,12 +111,12 @@ After having downloaded the data and put in the data folder (recommended to firs
    ```
 4. Run [`src/azure_ml_first_setup.py`](src/azure_ml_first_setup.py) to create the compute instances, the Data Asset, the environment and all the pipelines components.
 5. Execute [`create_azure_training_pipeline.py`](./create_azure_training_pipeline.py) to create and run the training pipeline.
-6. Specify the trained model locations using the .env file. Set the paths for:
-   - **TEXT2VEC_TRAINED_MODEL_PATH**: Datastore URI to the text-to-vector pickle.
-   - **PREDICTOR_TRAINED_MODEL_PATH**: Datastore URI to the trained predictor pickle.
+6. Configure the trained model locations using the `.env` file. Set the paths for:
+   - **TEXT2VEC_TRAINED_MODEL_PATH**: Datastore URI after `/path/` to the text-to-vector pickle.
+   - **PREDICTOR_TRAINED_MODEL_PATH**: Datastore URI after `/path/` to the trained predictor pickle.
 7. Run [`create_azure_inference_pipeline.py`](./create_azure_inference_pipeline.py) to create and run the inference pipeline.
 8. Deploy the inference pipeline by running [`create_batch_deployment_for_inference_pipeline.py`](./src/create_batch_deployment_for_inference_pipeline.py). This makes the pipeline available for deployment and use.
-9. Specify the input for the job either in the .env file or directly within the script. Once the input is set, run the batch job using [`run_batch_job.py`](./src/run_batch_job.py).
+9. Specify the input for the job either in the `.env` file or directly within the script. Once the input is set, run the batch job using [`run_batch_job.py`](./src/run_batch_job.py).
 
 
 ## Project structure
