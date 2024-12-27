@@ -1,24 +1,40 @@
 # Fine Food Reviews Classification
 
+## Index
+
+- [Problem Statement](#problem-statement)
+- [Technologies](#technologies)
+- [Technical Overview](#technical-overview)
+   - [1. Advanced Analytics](#1-advanced-analytics)
+   - [2. Components from Azure ML](#2-components-from-azure-ml)
+   - [3. Training Pipeline](#3-training-pipeline)
+   - [4. Inference Pipeline](#4-inference-pipeline)
+- [How to use](#how-to-use)
+- [Project Structure](#project-structure)
+- [Future Steps](#future-steps)
+
 ## Problem Statement
 
 In today’s competitive market, understanding customer sentiment is crucial for improving product offerings and enhancing customer satisfaction. This project focuses on **extracting actionable insights from customer reviews** of fine food products on Amazon using **data analytics** and **machine learning techniques**. By analyzing these reviews, businesses can gain a deeper **understanding of customer preferences, behavior, and overall satisfaction**.
 
-The project leverages a **machine learning model** with an **automated training and inference pipeline**, allowing businesses to process large volumes of text data efficiently. The inference pipeline is **deployed to predict sentiment** from customer reviews **in batch**, with the flexibility to **extend to other text sources** such as tweets, emails, and more. This solution empowers businesses to make informed decisions and deliver personalized customer experiences, driving growth and customer loyalty.
+The project leverages a **machine learning model** with an **automated training and inference pipeline** deployed in **Azure Machine Learning** with reusable components, allowing businesses to process large volumes of text data efficiently. The inference pipeline is **deployed to predict sentiment** from customer reviews **in batch**, with the flexibility to **extend to other text sources** such as tweets, emails, and more. This solution empowers businesses to make informed decisions and deliver personalized customer experiences, driving growth and customer loyalty.
+
+### Azure ML Schema:
+![alt text](imgs/fine_foods_review.png)
 
 **Business Purpose and Objectives:**
 1. Comprehensive Review Analysis:
-- Analyze customer reviews to uncover meaningful patterns and trends.
-- Gain insights into overall customer sentiment toward products and identify key factors influencing satisfaction.
+   - Analyze customer reviews to uncover meaningful patterns and trends.
+   - Gain insights into overall customer sentiment toward products and identify key factors influencing satisfaction.
 
 1. Sentiment Prediction Model:
-- Develop a predictive model to estimate customer ratings based on their written reviews.
-- Leverage sentiment analysis to ensure alignment between textual reviews and ratings, while detecting anomalies such as "troll" reviews or inconsistent feedback.
-- Implement a generic text model to extend sentiment analysis capabilities beyond reviews, enabling analysis of various text formats such as tweets, emails, and social media posts.
+   - Develop a predictive model to estimate customer ratings based on their written reviews.
+   - Leverage sentiment analysis to ensure alignment between textual reviews and ratings, while detecting anomalies such as "troll" reviews or inconsistent feedback.
+   - Implement a generic text model to extend sentiment analysis capabilities beyond reviews, enabling analysis of various text formats such as tweets, emails, and social media posts.
 
 1. Actionable Insights for Business Impact:
-- Enhance trend analysis to improve business metrics and performance.
-- Support data-driven decision-making in areas such as customer satisfaction, product development, and feedback evaluation.
+   - Enhance trend analysis to improve business metrics and performance.
+   - Support data-driven decision-making in areas such as customer satisfaction, product development, and feedback evaluation.
 
 **Data used:** https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews/download?datasetVersionNumber=2
 Note: it will require you to log in Kaggle.
