@@ -58,10 +58,10 @@ The entire process was initially developed using a smaller dataset and is docume
 
 - **Data Cleaning and Validation:** Identified and resolved inconsistencies such as duplicate customer reviews and illogical data errors to locate potential trolls or bots. [Notebook](reports/1_training_data_cleaning.ipynb)
 - **Data Exploration:** Conducted trend analysis to explore relationships between products, users, and reviews, uncovering valuable insights about customer behavior. [Notebook](reports/2_data_exploration.ipynb)
-- **Data Preprocessing:** Focuses on transforming and cleaning the data to ensure it is properly prepared for model input [Notebook](reports/3_data_preprocessing.ipynb)
+- **Data Preprocessing:** Focuses on transforming and cleaning the data to ensure it is properly prepared for model input. [Notebook](reports/3_data_preprocessing.ipynb)
 - **Word2Vec Training:** Provides a comprehensive guide to training the Word2Vec model. [Notebook](reports/4_Word2Vec_training.ipynb)
 - **Comparing Different preprocess models:** Compares and explains the selected models for converting text to vectors and handling imbalanced datasets. [Notebook](reports/5_comparing_pretraining_models.ipynb)
-- **Model Training:** Tested the capacity of the models and if the task can be performed with them good enough. [Notebook](reports/5_comparing_pretraining_models.ipynb)
+- **Model Training:** Tested the capacity of the models and if the task can be performed with them well enough. [Notebook](reports/5_comparing_pretraining_models.ipynb)
 - **Sentiment Analysis:** Tested the NLTK sentiment analysis model as a complement to a proprietary model, focusing on identifying and analyzing prediction mismatches. [Notebook](reports/SentimentAnalysis.ipynb)
 
 ### 2. Components from Azure ML
@@ -75,7 +75,7 @@ Each pipeline step includes:
 
 The details of each component:
 
-1. **Training Data Cleaning:** Automatically removes duplicates, irrelevant columns, and transforms ratings from a 1–5 scale to binary (0–1) [Step Script](src/pipeline_steps/training_data_cleaning/training_data_cleaning_step.py)
+1. **Training Data Cleaning:** Automatically removes duplicates, irrelevant columns, and transforms ratings from a 1–5 scale to binary (0–1). [Step Script](src/pipeline_steps/training_data_cleaning/training_data_cleaning_step.py)
 2. **Text processing:** Applies traditional NLP techniques:
      1. Sentence level cleaning: Handles abbreviations, repeated letters, several patterns,... [Script](src/pipeline_steps/text_processing/sentence_cleaning_classes.py)
      2. Token-level processing: Includes lemmatization and stopword removal. [Script](src/pipeline_steps/text_processing/text_processing_functions.py)
@@ -102,9 +102,9 @@ It contains the five core components outlined above and the local pipeline inclu
 
 **Pipeline Steps:**
 
-- Text Processing: Applies the same cleaning and tokenization steps as in training.
-- Text-to-Vector Conversion: Transforms input text into vectors using the registered vectorizer.
-- Model Prediction: Generates predictions using the trained model
+- **Text Processing:** Applies the same cleaning and tokenization steps as in training.
+- **Text-to-Vector Conversion:** Transforms input text into vectors using the registered vectorizer.
+- **Model Prediction:** Generates predictions using the trained model.
 
 **Azure ML Execution:**
 Run this pipeline on [this script](./create_azure_inference_pipeline.py). After execution, publish the pipeline.
@@ -156,7 +156,7 @@ After having downloaded the data and put in the data folder (recommended to firs
 
 ## Future Steps
 
-- Explore additional sentiment analysis models to improve detection of mismatches in subjective reviews.
+- Explore additional sentiment analysis models (e.g. Azure AI Language) to improve detection of mismatches in subjective reviews.
 - Implement parallel processing to reduce training times when working with the full dataset.
 - Integrate AutoML component into the Azure training pipeline to optimize model performance.
 - Add a scoring and evaluation component to assess model accuracy and performance metrics.
